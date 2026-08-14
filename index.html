@@ -304,16 +304,16 @@
     <!-- METRICAS DE RESUMEN -->
     <div class="summary-cards">
       <div class="stat-card">
-        <h3>Total Registrado</h3>
-        <div class="value" id="stat-total">0 Kg</div>
+        <h3>Plan Total</h3>
+        <div class="value" id="stat-total">43.000 UN</div>
       </div>
       <div class="stat-card">
-        <h3>Promedio Diario</h3>
-        <div class="value" id="stat-avg">0 Kg</div>
+        <h3>Ingreso Diario</h3>
+        <div class="value" id="stat-avg">0 UN</div>
       </div>
       <div class="stat-card">
         <h3>Día Máximo</h3>
-        <div class="value" id="stat-max">0 Kg</div>
+        <div class="value" id="stat-max">0 UN</div>
       </div>
       <div class="stat-card">
         <h3>Días con Registro</h3>
@@ -346,13 +346,13 @@
           </div>
 
           <div class="form-group">
-            <label for="entry-value">Cantidad (Kg / Unidades):</label>
+            <label for="entry-value">Cantidad (Unidades):</label>
             <input type="number" id="entry-value" step="0.01" min="0" placeholder="Ej: 1250.5" required>
           </div>
 
           <div class="form-group">
-            <label for="entry-notes">Detalle / Observación:</label>
-            <textarea id="entry-notes" rows="3" placeholder="Ej: Reproceso por corte, Turno Mañana..."></textarea>
+            <label for="entry-notes">Batch / Calibre:</label>
+            <textarea id="entry-notes" rows="3" placeholder="Ej:X110826VE, 5-6..."></textarea>
           </div>
 
           <button type="submit" class="btn-primary">
@@ -375,8 +375,8 @@
           <thead>
             <tr>
               <th>Fecha</th>
-              <th>Cantidad (Kg)</th>
-              <th>Detalle / Observaciones</th>
+              <th>Cantidad (UN)</th>
+              <th>Batch / Calibre</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -461,7 +461,7 @@
       data: {
         labels: dateList.map(d => d.substring(0, 5)), // Mostrar DD/MM
         datasets: [{
-          label: 'Reproceso (Kg)',
+          label: 'Reproceso (UN)',
           data: dateList.map(d => appData[d].value),
           backgroundColor: '#48cae4',
           borderColor: '#00b4d8',
@@ -545,9 +545,9 @@
       });
 
       // 3. Actualizar Métricas
-      document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} Kg`;
-      document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} Kg`;
-      document.getElementById('stat-max').textContent = `${max.toLocaleString('es-CL')} Kg`;
+      document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} UN`;
+      document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} UN`;
+      document.getElementById('stat-max').textContent = `${max.toLocaleString('es-CL')} UN`;
       document.getElementById('stat-days').textContent = `${count} / ${dateList.length}`;
     }
 
@@ -566,7 +566,7 @@
     // Edición rápida desde la tabla
     window.quickEdit = function(date, field) {
       if (field === 'value') {
-        const newVal = prompt(`Ingrese cantidad para ${date} (Kg):`, appData[date].value);
+        const newVal = prompt(`Ingrese cantidad para ${date} (UN):`, appData[date].value);
         if (newVal !== null) {
           appData[date].value = parseFloat(newVal) || 0;
           saveData();
