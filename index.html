@@ -347,7 +347,7 @@
 
           <div class="form-group">
             <label for="entry-value">Cantidad (Unidades):</label>
-            <input type="number" id="entry-value" step="0.01" min="0" placeholder="Ej: 1250.5" required>
+            <input type="number" id="entry-value" step="001" min="0" placeholder="Ej: 12505" required>
           </div>
 
           <div class="form-group">
@@ -407,8 +407,8 @@
     function generateDateRange() {
       const dates = [];
       const year = 2026;
-      let start = new Date(year, 6, 22); // Julio (mes 6)
-      const end = new Date(year, 7, 25);   // Agosto (mes 7)
+      let start = new Date(year, 6, 22); // Julio (mes 7)
+      const end = new Date(year, 7, 25);   // Agosto (mes 8)
 
       while (start <= end) {
         const day = String(start.getDate()).padStart(2, '0');
