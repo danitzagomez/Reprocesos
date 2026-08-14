@@ -1,405 +1,616 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reproceso Salar &#x2014; Plan vs Real - Planta de procesos Invermar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/site.css?v=Tjx_HztcLULbsdzu3WoHQJCIOtubA8PgjtdTAeCcsw8" />
-    
-<style>
-  .dash{
-    font-family:Inter,system-ui,sans-serif;
-    background:
-      radial-gradient(600px 260px at 10% -10%, rgba(42,198,190,.10), transparent 60%),
-      radial-gradient(500px 220px at 95% 0%, rgba(242,118,75,.08), transparent 55%),
-      #0B171F;
-    color:#E8F1F3;
-    border:1px solid #1F3844;
-    border-radius:14px;
-    padding:16px 18px 14px;
-    max-width:760px;
-    width:100%;
-    margin: 0 auto 30px;
-  }
-  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px solid #182D38;padding-bottom:10px;margin-bottom:10px;}
-  .title{font-weight:700;font-size:16px;letter-spacing:-.01em;}
-  .sub{color:#7C97A3;font-size:11px;margin-top:2px;}
-  .range{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#587280;white-space:nowrap;padding-top:2px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invermar Reprocesos - Control Diario</title>
+  <!-- Chart.js para los gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome para íconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #0b132b;
+      --card-bg: #1c2541;
+      --card-bg-light: #232f52;
+      --primary: #48cae4;
+      --accent: #00b4d8;
+      --accent-hover: #90e0ef;
+      --text-color: #edf2f4;
+      --text-muted: #a0aec0;
+      --border-color: #3a506b;
+      --danger: #ef233c;
+      --success: #38b000;
+    }
 
-  .kpis{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px;margin-bottom:10px;}
-  .kpi{background:#122430;border:1px solid #182D38;border-radius:9px;padding:8px 10px;}
-  .kpi .lbl{font-size:9.5px;color:#7C97A3;text-transform:uppercase;letter-spacing:.06em;}
-  .kpi .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;margin-top:2px;}
-  .kpi.hero{background:linear-gradient(160deg, rgba(183,146,240,.16), #122430);border-color:rgba(183,146,240,.5);}
-  .kpi.hero .val{color:#B792F0;font-size:20px;}
-  .kpi .sub2{font-size:9px;color:#587280;margin-top:1px;}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
 
-  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:#7C97A3;margin-bottom:8px;}
-  .legend span{display:flex;align-items:center;gap:4px;}
-  .dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
-  .dot.plan36{background:rgba(42,198,190,.3);}
-  .dot.real36{background:#2AC6BE;}
-  .dot.plan67{background:rgba(242,118,75,.3);}
-  .dot.real67{background:#F2764B;}
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+    }
 
-  .chartbox{background:#0F1E28;border:1px solid #182D38;border-radius:10px;padding:8px 10px 6px;margin-bottom:8px;}
-  .chart-title{font-size:10px;color:#7C97A3;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-  .bars{display:flex;align-items:flex-end;gap:4px;height:96px;padding-top:4px;}
-  .col{position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;}
-  .col .planbar{position:absolute;bottom:14px;width:16px;border-radius:2px 2px 0 0;}
-  .col .realbar{position:absolute;bottom:14px;width:8px;border-radius:2px 2px 0 0;}
-  .col .daylabel{position:absolute;bottom:0;font-size:8px;color:#587280;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
-  .col.c36 .planbar{background:rgba(42,198,190,.28);}
-  .col.c36 .realbar{background:#2AC6BE;}
-  .col.c67 .planbar{background:rgba(242,118,75,.3);}
-  .col.c67 .realbar{background:#F2764B;}
+    header {
+      background: linear-gradient(135deg, #1c2541 0%, #0b132b 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
 
-  .linechart{width:100%;height:56px;display:block;}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-  /* ---- tabla ---- */
-  table.trk{width:100%;border-collapse:collapse;font-size:11px;}
-  table.trk th{
-    text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#7C97A3;
-    text-transform:uppercase;letter-spacing:.05em;padding:5px 6px;border-bottom:1px solid #1F3844;
-  }
-  table.trk th:first-child, table.trk td:first-child{text-align:left;}
-  table.trk td{padding:4px 6px;border-bottom:1px solid #152632;text-align:right;font-family:'JetBrains Mono',monospace;}
-  table.trk tr:hover td{background:rgba(183,146,240,.05);}
-  table.trk td.cal{text-align:center;}
-  .calpill{font-size:9px;padding:1px 6px;border-radius:20px;}
-  .calpill.c36{background:rgba(42,198,190,.18);color:#2AC6BE;}
-  .calpill.c67{background:rgba(242,118,75,.2);color:#F2764B;}
-  table.trk input.rowreal{
-    width:64px;background:#0F1E28;border:1px solid #1F3844;color:#E8F1F3;border-radius:5px;
-    padding:3px 5px;font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;
-  }
-  table.trk input.rowreal:focus{outline:none;border-color:#B792F0;background:rgba(183,146,240,.1);}
-  td.cump-good{color:#57CE95;font-weight:700;}
-  td.cump-warn{color:#F0C24B;font-weight:700;}
-  td.cump-bad{color:#EF6F6C;font-weight:700;}
-  td.cump-none{color:#587280;}
-  .tablewrap{max-height:230px;overflow-y:auto;}
+    .brand i {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
 
-  #msg{font-size:10.5px;color:#57CE95;margin-left:6px;font-family:'JetBrains Mono',monospace;text-transform:none;}
-  .btn-reset {
-    background: transparent;
-    border: 1px solid rgba(239,111,108,0.3);
-    color: #EF6F6C;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    border-radius: 4px;
-    padding: 1px 5px;
-    cursor: pointer;
-    float: right;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-  .btn-reset:hover {
-    background: rgba(239,111,108,0.08);
-    border-color: #EF6F6C;
-  }
-  footer{max-width:760px;width:100%;text-align:center;color:#4a5f6b;font-size:10.5px;font-family:monospace;margin:15px auto 0;}
-</style>
+    .brand h1 {
+      font-size: 1.8rem;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+    }
 
+    .brand p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    .stat-card h3 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 992px) {
+      .grid-2col {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 380px;
+      width: 100%;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background-color: var(--card-bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #0b132b;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-danger {
+      background-color: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: var(--card-bg-light);
+      color: var(--primary);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tr:hover {
+      background-color: rgba(255,255,255,0.03);
+    }
+
+    .editable-cell {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .editable-cell:hover {
+      background-color: var(--card-bg-light);
+      outline: 1px dashed var(--primary);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background-color: var(--card-bg-light);
+      color: var(--accent);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
 <body>
-        <header b-00nzwb38z5 class="app-header">
-            <div b-00nzwb38z5 class="header-wrap">
-                <div b-00nzwb38z5 class="brand">
-                    <span b-00nzwb38z5 class="dot"></span>
-                    <a class="brand-link" href="/">Invermar <span b-00nzwb38z5 class="brand-sub">Reprocesos</span></a>
-                </div>
-                <nav b-00nzwb38z5 class="main-nav">
-                    <a class="nav-btn active" href="/">Reprocesos</a>
-                    
-                </nav>
-                <div b-00nzwb38z5 class="user-menu">
-                    <span b-00nzwb38z5 class="user-email">rodrigo.saldias@invermar.cl</span>
-                    <form method="post" id="logoutForm" class="logout-form" action="/Account/Logout">
-                        
-                        <button b-00nzwb38z5 type="submit" class="logout-btn">
-                            Cerrar sesión
-                        </button>
-                    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LgsJxa-MGxMoQBDc2EQ8mMvNW3OUw-ZVK-P0LzpDRURF8d0zvsqssY9GIGorqc9ufqJ3VQRcfoZfMDbsd6d2wK5gxEDEI4exnCKCI1no-xRh26R4cnSsnJ272MRBwNK2pKquD1OwHbEE58jJdGm5TkHkJk2cglBAwqgRndmtNHWQu5Uchm3xNu3uYubpvyCSA" /></form>
-                </div>
-            </div>
-        </header>
 
-    <div b-00nzwb38z5 class="main-content">
-        
-
-<div class="wrap">
-
-  <div class="dash">
-    <div class="head">
-      <div>
-        <div class="title">Reproceso Salar — Plan vs Real</div>
-        <div class="sub">Invermar · Cal. 3–6 (mecanizado) → Cal. 6–7 (manual)</div>
+  <div class="container">
+    
+    <!-- ENCABEZADO -->
+    <header>
+      <div class="brand">
+        <i class="fa-solid fa-fish-fins"></i>
+        <div>
+          <h1>Invermar Reprocesos</h1>
+          <p>Panel de Control y Monitoreo Diario (22 Jul - 25 Ago)</p>
+        </div>
       </div>
-      <div class="range">22 jul – 13 ago 2026</div>
+      <div class="badge">
+        <i class="fa-solid fa-database"></i> Datos Almacenados Localmente
+      </div>
+    </header>
+
+    <!-- METRICAS DE RESUMEN -->
+    <div class="summary-cards">
+      <div class="stat-card">
+        <h3>Total Registrado</h3>
+        <div class="value" id="stat-total">0 Kg</div>
+      </div>
+      <div class="stat-card">
+        <h3>Promedio Diario</h3>
+        <div class="value" id="stat-avg">0 Kg</div>
+      </div>
+      <div class="stat-card">
+        <h3>Día Máximo</h3>
+        <div class="value" id="stat-max">0 Kg</div>
+      </div>
+      <div class="stat-card">
+        <h3>Días con Registro</h3>
+        <div class="value" id="stat-days">0 / 35</div>
+      </div>
     </div>
 
-    <div class="kpis">
-      <div class="kpi"><div class="lbl">Plan total</div><div class="val" id="kpiPlan">0</div></div>
-      <div class="kpi"><div class="lbl">Real ingresado</div><div class="val" id="kpiReal">0</div></div>
-      <div class="kpi hero"><div class="lbl">Cumplimiento</div><div class="val" id="kpiCump">—</div><div class="sub2" id="kpiSub">sin registros</div></div>
+    <!-- SECCIÓN PRINCIPAL: GRAFICO Y FORMULARIO DE INGRESO -->
+    <div class="grid-2col">
+      
+      <!-- GRÁFICO DE BARRAS -->
+      <div class="card">
+        <div class="card-title">
+          <i class="fa-chart-column"></i> Gráfico de Producción / Reproceso
+        </div>
+        <div class="chart-container">
+          <canvas id="reprocesoChart"></canvas>
+        </div>
+      </div>
+
+      <!-- FORMULARIO DE INGRESO DIARIO -->
+      <div class="card">
+        <div class="card-title">
+          <i class="fa-pen-to-square"></i> Ingreso / Edición Rápida
+        </div>
+        <form id="entry-form">
+          <div class="form-group">
+            <label for="entry-date">Seleccionar Fecha:</label>
+            <select id="entry-date" required></select>
+          </div>
+
+          <div class="form-group">
+            <label for="entry-value">Cantidad (Kg / Unidades):</label>
+            <input type="number" id="entry-value" step="0.01" min="0" placeholder="Ej: 1250.5" required>
+          </div>
+
+          <div class="form-group">
+            <label for="entry-notes">Detalle / Observación:</label>
+            <textarea id="entry-notes" rows="3" placeholder="Ej: Reproceso por corte, Turno Mañana..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <i class="fa-floppy-disk"></i> Guardar Día
+          </button>
+        </form>
+      </div>
+
     </div>
 
-    <div class="legend">
-      <span><i class="dot plan36"></i>Plan 3–6</span>
-      <span><i class="dot real36"></i>Real 3–6</span>
-      <span><i class="dot plan67"></i>Plan 6–7</span>
-      <span><i class="dot real67"></i>Real 6–7</span>
-    </div>
+    <!-- SECCIÓN TABLA DETALLE DIARIO -->
+    <div class="card">
+      <div class="card-title" style="justify-content: space-between;">
+        <span><i class="fa-table-list"></i> Detalle Diario (22 Julio - 25 Agosto)</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">* Haz clic en la tabla para modificar rápido</span>
+      </div>
 
-    <div class="chartbox">
-      <div class="chart-title">Avance diario</div>
-      <div id="bars" class="bars"></div>
-    </div>
-
-    <div class="chartbox small">
-      <div class="chart-title">Acumulado (plan vs real)</div>
-      <svg id="lineChart" class="linechart"></svg>
-    </div>
-
-    <div class="chartbox">
-      <div class="chart-title">Detalle diario · Real editable a mano <span id="msg"></span><button id="resetReal" class="btn-reset">Reiniciar avance real</button></div>
-      <div class="tablewrap">
-        <table class="trk">
+      <div class="table-responsive">
+        <table>
           <thead>
-            <tr><th>Fecha</th><th>Calibre</th><th>Plan</th><th>Real</th><th>Cumpl.</th></tr>
+            <tr>
+              <th>Fecha</th>
+              <th>Cantidad (Kg)</th>
+              <th>Detalle / Observaciones</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
-          <tbody id="tblBody"></tbody>
+          <tbody id="table-body">
+            <!-- Las filas se generan con Javascript -->
+          </tbody>
         </table>
       </div>
+
+      <div class="actions">
+        <button id="btn-export" class="btn-primary" style="background-color: #2a9d8f;">
+          <i class="fa-file-excel"></i> Exportar a JSON
+        </button>
+        <button id="btn-reset" class="btn-danger">
+          <i class="fa-trash"></i> Borrar Todo
+        </button>
+      </div>
     </div>
+
+    <footer>
+      <p>&copy; 2026 Invermar Reprocesos - Sistema de Registro Interno en GitHub Pages</p>
+    </footer>
+
   </div>
-  <footer>Invermar · Reproceso_salar.xlsx</footer>
-</div>
 
+  <script>
+    // Generar rango de fechas desde 22 de Julio hasta 25 de Agosto
+    function generateDateRange() {
+      const dates = [];
+      const year = 2026;
+      let start = new Date(year, 6, 22); // Julio (mes 6)
+      const end = new Date(year, 7, 25);   // Agosto (mes 7)
 
-    </div>
+      while (start <= end) {
+        const day = String(start.getDate()).padStart(2, '0');
+        const month = String(start.getMonth() + 1).padStart(2, '0');
+        const dateStr = `${day}/${month}/${start.getFullYear()}`;
+        dates.push(dateStr);
+        start.setDate(start.getDate() + 1);
+      }
+      return dates;
+    }
 
-    
-<script>
-const xsrfToken = "CfDJ8LgsJxa-MGxMoQBDc2EQ8mMvNW3OUw-ZVK-P0LzpDRURF8d0zvsqssY9GIGorqc9ufqJ3VQRcfoZfMDbsd6d2wK5gxEDEI4exnCKCI1no-xRh26R4cnSsnJ272MRBwNK2pKquD1OwHbEE58jJdGm5TkHkJk2cglBAwqgRndmtNHWQu5Uchm3xNu3uYubpvyCSA";
+    const dateList = generateDateRange();
 
-(function(){
-  const plan = [
-    {f:'2026-07-22', lbl:'22-jul', cal:36, plan:3000},
-    {f:'2026-07-23', lbl:'23-jul', cal:36, plan:3000},
-    {f:'2026-07-24', lbl:'24-jul', cal:36, plan:3000},
-    {f:'2026-07-27', lbl:'27-jul', cal:36, plan:4000},
-    {f:'2026-07-28', lbl:'28-jul', cal:36, plan:4000},
-    {f:'2026-07-29', lbl:'29-jul', cal:36, plan:4000},
-    {f:'2026-07-30', lbl:'30-jul', cal:36, plan:4000},
-    {f:'2026-07-31', lbl:'31-jul', cal:67, plan:1800},
-    {f:'2026-08-03', lbl:'03-ago', cal:67, plan:1800},
-    {f:'2026-08-04', lbl:'04-ago', cal:67, plan:1800},
-    {f:'2026-08-05', lbl:'05-ago', cal:67, plan:1800},
-    {f:'2026-08-06', lbl:'06-ago', cal:67, plan:1800},
-    {f:'2026-08-07', lbl:'07-ago', cal:67, plan:1800},
-    {f:'2026-08-10', lbl:'10-ago', cal:67, plan:1800},
-    {f:'2026-08-11', lbl:'11-ago', cal:67, plan:1800},
-    {f:'2026-08-12', lbl:'12-ago', cal:67, plan:1800},
-    {f:'2026-08-13', lbl:'13-ago', cal:67, plan:1800},
-  ];
-  const maxPlan = 4000;
-  let real = {};
+    // Estado de datos (LocalStorage o Vacío)
+    let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
-  const barsEl = document.getElementById('bars');
-  const tblBody = document.getElementById('tblBody');
-  const msg = document.getElementById('msg');
+    // Asegurar estructura
+    dateList.forEach(date => {
+      if (!appData[date]) {
+        appData[date] = { value: 0, notes: '' };
+      }
+    });
 
-  function fmt(n){ return Math.round(n).toLocaleString('es-CL'); }
+    // Guardar en LocalStorage
+    function saveData() {
+      localStorage.setItem('invermar_reprocesos_data', JSON.stringify(appData));
+      updateUI();
+    }
 
-  function cumpClass(pct){
-    return pct>=95 ? 'cump-good' : pct>=80 ? 'cump-warn' : 'cump-bad';
-  }
+    // Inicializar Select de Fechas
+    const selectDate = document.getElementById('entry-date');
+    dateList.forEach(date => {
+      const opt = document.createElement('option');
+      opt.value = date;
+      opt.textContent = date;
+      selectDate.appendChild(opt);
+    });
 
-  async function persist(){
-    msg.textContent = 'guardando avance…';
-    try{
-      const res = await fetch('/api/reproceso/avance', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'X-XSRF-TOKEN': xsrfToken
+    // Cargar datos en el formulario al cambiar fecha
+    selectDate.addEventListener('change', () => {
+      const selected = selectDate.value;
+      document.getElementById('entry-value').value = appData[selected].value || '';
+      document.getElementById('entry-notes').value = appData[selected].notes || '';
+    });
+
+    // Inicializar Chart.js
+    const ctx = document.getElementById('reprocesoChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: dateList.map(d => d.substring(0, 5)), // Mostrar DD/MM
+        datasets: [{
+          label: 'Reproceso (Kg)',
+          data: dateList.map(d => appData[d].value),
+          backgroundColor: '#48cae4',
+          borderColor: '#00b4d8',
+          borderWidth: 1,
+          borderRadius: 4,
+          hoverBackgroundColor: '#90e0ef'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#a0aec0', font: { size: 10 } }
           },
-          body: JSON.stringify(real)
-      });
-      if(!res.ok) {
-          console.error('No se pudo guardar el avance real en el servidor');
-          msg.textContent = 'error al guardar';
-      } else {
-          msg.textContent = 'guardado ✓';
-          setTimeout(()=>{ if(msg.textContent==='guardado ✓') msg.textContent=''; }, 1500);
-      }
-    }catch(e){ 
-        console.error('Error guardando avance real', e); 
-        msg.textContent = 'error de red al guardar';
-    }
-  }
-
-  async function saveAndRerender(fecha, val){
-    if(val===''){ delete real[fecha]; } else { real[fecha] = Number(val); }
-    render();
-    await persist();
-  }
-
-  function buildTable(){
-    tblBody.innerHTML = '';
-    plan.forEach(d=>{
-      const r = real[d.f];
-      const tr = document.createElement('tr');
-
-      const tdFecha = document.createElement('td'); tdFecha.textContent = d.lbl; tr.appendChild(tdFecha);
-
-      const tdCal = document.createElement('td'); tdCal.className='cal';
-      tdCal.innerHTML = `<span class="calpill c${d.cal}">${d.cal===36?'3–6':'6–7'}</span>`;
-      tr.appendChild(tdCal);
-
-      const tdPlan = document.createElement('td'); tdPlan.textContent = fmt(d.plan); tr.appendChild(tdPlan);
-
-      const tdReal = document.createElement('td');
-      const inp = document.createElement('input');
-      inp.type='number'; inp.min=0; inp.step=1; inp.className='rowreal'; inp.placeholder='–';
-      inp.value = (r!==undefined && r!==null) ? r : '';
-      inp.addEventListener('change', ()=> saveAndRerender(d.f, inp.value));
-      tdReal.appendChild(inp);
-      tr.appendChild(tdReal);
-
-      const tdCump = document.createElement('td');
-      if(r!==undefined && r!==null && r!==''){
-        const pct = Math.round((Number(r)/d.plan)*100);
-        tdCump.textContent = pct+'%';
-        tdCump.className = cumpClass(pct);
-      } else {
-        tdCump.textContent = '–';
-        tdCump.className = 'cump-none';
-      }
-      tr.appendChild(tdCump);
-
-      tblBody.appendChild(tr);
-    });
-  }
-
-  function render(){
-    barsEl.innerHTML = '';
-    plan.forEach(d=>{
-      const col = document.createElement('div');
-      col.className = 'col c'+d.cal;
-      const ph = Math.max(2, Math.round((d.plan/maxPlan)*78));
-      const r = real[d.f];
-      const planBar = document.createElement('div');
-      planBar.className='planbar';
-      planBar.style.height = ph+'px';
-      planBar.title = d.lbl+' · plan '+fmt(d.plan);
-      col.appendChild(planBar);
-      if(r!==undefined && r!==null && r!==''){
-        const rh = Math.max(2, Math.round((Number(r)/maxPlan)*78));
-        const realBar = document.createElement('div');
-        realBar.className='realbar';
-        realBar.style.height = rh+'px';
-        realBar.title = d.lbl+' · real '+fmt(r);
-        col.appendChild(realBar);
-      }
-      const lbl = document.createElement('div');
-      lbl.className='daylabel';
-      lbl.textContent = d.lbl.slice(0,2);
-      col.appendChild(lbl);
-      barsEl.appendChild(col);
-    });
-
-    const svg = document.getElementById('lineChart');
-    const W = barsEl.clientWidth || 700, H = 56;
-    let cumPlan=0, cumReal=0, totalPlanFull=0;
-    plan.forEach(d=>totalPlanFull+=d.plan);
-    const stepX = W/(plan.length-1);
-    let ptsPlan=[], ptsReal=[];
-    let lastRealIdx=-1;
-    plan.forEach((d,i)=>{
-      cumPlan+=d.plan;
-      const y1 = H - (cumPlan/totalPlanFull)*H;
-      ptsPlan.push(`${i*stepX},${y1}`);
-      const r = real[d.f];
-      if(r!==undefined && r!==null && r!==''){
-        cumReal+=Number(r);
-        lastRealIdx=i;
-      }
-      if(lastRealIdx>=0){
-        const y2 = H - (cumReal/totalPlanFull)*H;
-        ptsReal.push(`${i*stepX},${y2}`);
-      }
-    });
-    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-    svg.innerHTML = `
-      <line x1="0" y1="${H}" x2="${W}" y2="${H}" stroke="#182D38" stroke-width="1"/>
-      <polyline points="${ptsPlan.join(' ')}" fill="none" stroke="#587280" stroke-width="1.6" stroke-dasharray="4,3"/>
-      ${ptsReal.length ? `<polyline points="${ptsReal.join(' ')}" fill="none" stroke="#B792F0" stroke-width="2.2"/>` : ''}
-    `;
-
-    let sumPlan=0, sumReal=0, n=0;
-    plan.forEach(d=>{
-      const r = real[d.f];
-      if(r!==undefined && r!==null && r!==''){
-        sumPlan += d.plan; sumReal += Number(r); n++;
-      }
-    });
-    document.getElementById('kpiPlan').textContent = fmt(totalPlanFull)+' un.';
-    document.getElementById('kpiReal').textContent = fmt(sumReal)+' un.';
-    const kpiCump = document.getElementById('kpiCump');
-    const kpiSub = document.getElementById('kpiSub');
-    if(n===0){ kpiCump.textContent='—'; kpiSub.textContent='sin registros'; }
-    else{
-      const pct = Math.round((sumReal/sumPlan)*100);
-      kpiCump.textContent = pct+'%';
-      kpiSub.textContent = n+' día(s) registrados';
-    }
-
-    buildTable();
-  }
-
-  async function loadInitialData(){
-    msg.textContent = 'cargando avance…';
-    try{
-      const res = await fetch('/api/reproceso/avance');
-      if(res.ok) {
-          real = await res.json();
-          if(typeof real !== 'object' || real === null) {
-              real = {};
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            ticks: { color: '#a0aec0' }
           }
-          msg.textContent = 'avance cargado';
-          setTimeout(()=>{ if(msg.textContent==='avance cargado') msg.textContent=''; }, 1500);
-      } else {
-          msg.textContent = 'sin registros';
-          setTimeout(()=>{ if(msg.textContent==='sin registros') msg.textContent=''; }, 1500);
+        },
+        plugins: {
+          legend: { labels: { color: '#edf2f4' } },
+          tooltip: {
+            callbacks: {
+              afterBody: function(context) {
+                const index = context[0].dataIndex;
+                const dateKey = dateList[index];
+                const notes = appData[dateKey].notes;
+                return notes ? `Detalle: ${notes}` : '';
+              }
+            }
+          }
+        }
       }
-    }catch(e){
-      console.error('Error cargando avance real', e);
-      msg.textContent = 'error de carga';
+    });
+
+    // Actualizar Interfaz (Tabla, Gráfico y Estadísticas)
+    function updateUI() {
+      // 1. Actualizar Gráfico
+      myChart.data.datasets[0].data = dateList.map(d => appData[d].value);
+      myChart.update();
+
+      // 2. Actualizar Tabla
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      let total = 0;
+      let count = 0;
+      let max = 0;
+
+      dateList.forEach(date => {
+        const val = parseFloat(appData[date].value) || 0;
+        const notes = appData[date].notes || '';
+
+        if (val > 0) {
+          total += val;
+          count++;
+          if (val > max) max = val;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${date}</strong></td>
+          <td class="editable-cell" onclick="quickEdit('${date}', 'value')">
+            <span style="color: ${val > 0 ? '#48cae4' : '#636c76'}; font-weight: bold;">
+              ${val.toLocaleString('es-CL')} Kg
+            </span>
+          </td>
+          <td class="editable-cell" onclick="quickEdit('${date}', 'notes')">
+            ${notes ? notes : '<i style="color: #636c76;">Sin detalle</i>'}
+          </td>
+          <td>
+            <button class="btn-danger" onclick="clearDay('${date}')" title="Limpiar Día">
+              <i class="fa-eraser"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // 3. Actualizar Métricas
+      document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} Kg`;
+      document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} Kg`;
+      document.getElementById('stat-max').textContent = `${max.toLocaleString('es-CL')} Kg`;
+      document.getElementById('stat-days').textContent = `${count} / ${dateList.length}`;
     }
-    render();
-  }
 
-  const resetBtn = document.getElementById('resetReal');
-  resetBtn.addEventListener('click', async ()=>{
-    if(!confirm('Esto borra el avance real de TODOS los que usan este dashboard. ¿Continuar?')) return;
-    real = {};
-    render();
-    await persist();
-  });
+    // Manejo del Formulario
+    document.getElementById('entry-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = selectDate.value;
+      const val = parseFloat(document.getElementById('entry-value').value) || 0;
+      const notes = document.getElementById('entry-notes').value;
 
-  loadInitialData();
-})();
-</script>
+      appData[date] = { value: val, notes: notes };
+      saveData();
+      alert(`Datos guardados correctamente para el día ${date}`);
+    });
 
+    // Edición rápida desde la tabla
+    window.quickEdit = function(date, field) {
+      if (field === 'value') {
+        const newVal = prompt(`Ingrese cantidad para ${date} (Kg):`, appData[date].value);
+        if (newVal !== null) {
+          appData[date].value = parseFloat(newVal) || 0;
+          saveData();
+        }
+      } else if (field === 'notes') {
+        const newNotes = prompt(`Ingrese detalle/observación para ${date}:`, appData[date].notes);
+        if (newNotes !== null) {
+          appData[date].notes = newNotes;
+          saveData();
+        }
+      }
+    };
+
+    // Limpiar un día específico
+    window.clearDay = function(date) {
+      if (confirm(`¿Deseas borrar los datos del día ${date}?`)) {
+        appData[date] = { value: 0, notes: '' };
+        saveData();
+      }
+    };
+
+    // Borrar todo
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      if (confirm('¿Estás seguro de que deseas borrar TODOS los registros? Esta acción no se puede deshacer.')) {
+        dateList.forEach(d => appData[d] = { value: 0, notes: '' });
+        saveData();
+      }
+    });
+
+    // Exportar datos
+    document.getElementById('btn-export').addEventListener('click', () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `invermar_reprocesos_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
+
+    // Cargar formulario inicial
+    selectDate.dispatchEvent(new Event('change'));
+    updateUI();
+  </script>
 </body>
 </html>
+
