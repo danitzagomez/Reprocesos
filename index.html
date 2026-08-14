@@ -1,203 +1,405 @@
-<!DOCTYPE html> 
+
+
+<!DOCTYPE html>
 <html lang="es">
-  <head>    
-    <meta charset="UTF-8">   
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invermar Reprocesos - Reprocesos Salar</title>   
-    <!-- Librería para el gráfico -->  
-    <script src="https://cdn.jsdelivr.net/npm/chart.js">
-      
-    </script>    <style>      
-      * {            
-  box-sizing: border-box;      
-        margin: 0;           
-        padding: 0;          
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-        body {           
-          background-color: #0b192c; /* Azul oscuro */            
-          color: #ffffff;        
-          padding: 20px;        
-          display: flex;         
-          flex-direction: column;   
-          align-items: center;       
-          min-height: 100vh;  
-        }
-        header {           
-          text-align: center;   
-          margin-bottom: 30px; 
-        }
-        header h1 {           
-          color: #4ea8de;   
-          font-size: 1.5rem;
-          text-transform: uppercase;  
-          letter-spacing: 2px;   
-        }
-        header h2 {         
-          font-size: 2.5rem;   
-          margin-top: 5px;     
-          color: #f1f1f1;       
-        }
-        .cards-container {       
-          display: grid;           
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));   
-          gap: 20px;           
-          width: 100%;          
-          max-width: 1000px;    
-          margin-bottom: 30px;      
-        }
-        .card {         
-          background-color: #1e3e62; 
-          border-radius: 12px;       
-          padding: 25px;          
-          text-align: center;       
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-          border: 1px solid #005691;    
-        }
-        .card h3 {    
-          font-size: 1.1rem;     
-          color: #90e0ef;       
-          margin-bottom: 15px;   
-        }
-        .card .value {        
-          font-size: 2rem;          
-          font-weight: bold;         
-          color: #ffffff;        
-        }
-        .input-section {      
-          background-color: #1e3e62;    
-          padding: 20px;            
-          border-radius: 12px;     
-          width: 100%;           
-          max-width: 1000px;     
-          margin-bottom: 30px;       
-          display: flex;          
-          gap: 15px; 
-          justify-content: center;   
-          align-items: center;      
-          flex-wrap: wrap;        
-        }
-        .input-section label {          
-          font-weight: bold;         
-          color: #90e0ef;      
-        }
-        .input-section input {   
-          padding: 10px;        
-          border-radius: 6px;     
-          border: 1px solid #4ea8de;  
-          background-color: #0b192c;  
-          color: #fff;          
-          font-size: 1rem;      
-        }
-        .input-section button {        
-          padding: 10px 20px;         
-          border-radius: 6px;          
-          border: none;        
-          background-color: #0077b6;    
-          color: #fff;          
-          font-size: 1rem;          
-          font-weight: bold;          
-          cursor: pointer;        
-          transition: background 0.3s;     
-        }
-        .input-section button:hover {   
-          background-color: #0096c7;      
-        }
-        .chart-container {           
-          background-color: #1e3e62; 
-          padding: 20px;           
-          border-radius: 12px;      
-          width: 100%;            
-          max-width: 1000px;      
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-        }    </style>
-  </head>
-  <body>
-    <header> 
-      <h1>Invermar Reprocesos</h1>
-      <h2>Reprocesos Salar</h2>    
-    </header>
-    <!-- Cuadros Principales -->  
-    <div class="cards-container">  
-      <div class="card">           
-        <h3>Plan Total</h3>        
-        <div class="value" id="planTotal">43.000 kg</div>   
-      </div>        
-      <div class="card">           
-        <h3>Real Ingresado</h3>            
-        <div class="value" id="realIngresado">0 kg</div>  
-      </div>       
-      <div class="card">           
-        <h3>Cumplimiento</h3>       
-        <div class="value" id="cumplimiento">0%</div>   
-      </div>   
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reproceso Salar &#x2014; Plan vs Real - Planta de procesos Invermar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css?v=Tjx_HztcLULbsdzu3WoHQJCIOtubA8PgjtdTAeCcsw8" />
+    
+<style>
+  .dash{
+    font-family:Inter,system-ui,sans-serif;
+    background:
+      radial-gradient(600px 260px at 10% -10%, rgba(42,198,190,.10), transparent 60%),
+      radial-gradient(500px 220px at 95% 0%, rgba(242,118,75,.08), transparent 55%),
+      #0B171F;
+    color:#E8F1F3;
+    border:1px solid #1F3844;
+    border-radius:14px;
+    padding:16px 18px 14px;
+    max-width:760px;
+    width:100%;
+    margin: 0 auto 30px;
+  }
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px solid #182D38;padding-bottom:10px;margin-bottom:10px;}
+  .title{font-weight:700;font-size:16px;letter-spacing:-.01em;}
+  .sub{color:#7C97A3;font-size:11px;margin-top:2px;}
+  .range{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#587280;white-space:nowrap;padding-top:2px;}
+
+  .kpis{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px;margin-bottom:10px;}
+  .kpi{background:#122430;border:1px solid #182D38;border-radius:9px;padding:8px 10px;}
+  .kpi .lbl{font-size:9.5px;color:#7C97A3;text-transform:uppercase;letter-spacing:.06em;}
+  .kpi .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;margin-top:2px;}
+  .kpi.hero{background:linear-gradient(160deg, rgba(183,146,240,.16), #122430);border-color:rgba(183,146,240,.5);}
+  .kpi.hero .val{color:#B792F0;font-size:20px;}
+  .kpi .sub2{font-size:9px;color:#587280;margin-top:1px;}
+
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:#7C97A3;margin-bottom:8px;}
+  .legend span{display:flex;align-items:center;gap:4px;}
+  .dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
+  .dot.plan36{background:rgba(42,198,190,.3);}
+  .dot.real36{background:#2AC6BE;}
+  .dot.plan67{background:rgba(242,118,75,.3);}
+  .dot.real67{background:#F2764B;}
+
+  .chartbox{background:#0F1E28;border:1px solid #182D38;border-radius:10px;padding:8px 10px 6px;margin-bottom:8px;}
+  .chart-title{font-size:10px;color:#7C97A3;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+
+  .bars{display:flex;align-items:flex-end;gap:4px;height:96px;padding-top:4px;}
+  .col{position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;}
+  .col .planbar{position:absolute;bottom:14px;width:16px;border-radius:2px 2px 0 0;}
+  .col .realbar{position:absolute;bottom:14px;width:8px;border-radius:2px 2px 0 0;}
+  .col .daylabel{position:absolute;bottom:0;font-size:8px;color:#587280;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+  .col.c36 .planbar{background:rgba(42,198,190,.28);}
+  .col.c36 .realbar{background:#2AC6BE;}
+  .col.c67 .planbar{background:rgba(242,118,75,.3);}
+  .col.c67 .realbar{background:#F2764B;}
+
+  .linechart{width:100%;height:56px;display:block;}
+
+  /* ---- tabla ---- */
+  table.trk{width:100%;border-collapse:collapse;font-size:11px;}
+  table.trk th{
+    text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#7C97A3;
+    text-transform:uppercase;letter-spacing:.05em;padding:5px 6px;border-bottom:1px solid #1F3844;
+  }
+  table.trk th:first-child, table.trk td:first-child{text-align:left;}
+  table.trk td{padding:4px 6px;border-bottom:1px solid #152632;text-align:right;font-family:'JetBrains Mono',monospace;}
+  table.trk tr:hover td{background:rgba(183,146,240,.05);}
+  table.trk td.cal{text-align:center;}
+  .calpill{font-size:9px;padding:1px 6px;border-radius:20px;}
+  .calpill.c36{background:rgba(42,198,190,.18);color:#2AC6BE;}
+  .calpill.c67{background:rgba(242,118,75,.2);color:#F2764B;}
+  table.trk input.rowreal{
+    width:64px;background:#0F1E28;border:1px solid #1F3844;color:#E8F1F3;border-radius:5px;
+    padding:3px 5px;font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;
+  }
+  table.trk input.rowreal:focus{outline:none;border-color:#B792F0;background:rgba(183,146,240,.1);}
+  td.cump-good{color:#57CE95;font-weight:700;}
+  td.cump-warn{color:#F0C24B;font-weight:700;}
+  td.cump-bad{color:#EF6F6C;font-weight:700;}
+  td.cump-none{color:#587280;}
+  .tablewrap{max-height:230px;overflow-y:auto;}
+
+  #msg{font-size:10.5px;color:#57CE95;margin-left:6px;font-family:'JetBrains Mono',monospace;text-transform:none;}
+  .btn-reset {
+    background: transparent;
+    border: 1px solid rgba(239,111,108,0.3);
+    color: #EF6F6C;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    border-radius: 4px;
+    padding: 1px 5px;
+    cursor: pointer;
+    float: right;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .btn-reset:hover {
+    background: rgba(239,111,108,0.08);
+    border-color: #EF6F6C;
+  }
+  footer{max-width:760px;width:100%;text-align:center;color:#4a5f6b;font-size:10.5px;font-family:monospace;margin:15px auto 0;}
+</style>
+
+</head>
+<body>
+        <header b-00nzwb38z5 class="app-header">
+            <div b-00nzwb38z5 class="header-wrap">
+                <div b-00nzwb38z5 class="brand">
+                    <span b-00nzwb38z5 class="dot"></span>
+                    <a class="brand-link" href="/">Invermar <span b-00nzwb38z5 class="brand-sub">Reprocesos</span></a>
+                </div>
+                <nav b-00nzwb38z5 class="main-nav">
+                    <a class="nav-btn active" href="/">Reprocesos</a>
+                    
+                </nav>
+                <div b-00nzwb38z5 class="user-menu">
+                    <span b-00nzwb38z5 class="user-email">rodrigo.saldias@invermar.cl</span>
+                    <form method="post" id="logoutForm" class="logout-form" action="/Account/Logout">
+                        
+                        <button b-00nzwb38z5 type="submit" class="logout-btn">
+                            Cerrar sesión
+                        </button>
+                    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LgsJxa-MGxMoQBDc2EQ8mMvNW3OUw-ZVK-P0LzpDRURF8d0zvsqssY9GIGorqc9ufqJ3VQRcfoZfMDbsd6d2wK5gxEDEI4exnCKCI1no-xRh26R4cnSsnJ272MRBwNK2pKquD1OwHbEE58jJdGm5TkHkJk2cglBAwqgRndmtNHWQu5Uchm3xNu3uYubpvyCSA" /></form>
+                </div>
+            </div>
+        </header>
+
+    <div b-00nzwb38z5 class="main-content">
+        
+
+<div class="wrap">
+
+  <div class="dash">
+    <div class="head">
+      <div>
+        <div class="title">Reproceso Salar — Plan vs Real</div>
+        <div class="sub">Invermar · Cal. 3–6 (mecanizado) → Cal. 6–7 (manual)</div>
+      </div>
+      <div class="range">22 jul – 13 ago 2026</div>
     </div>
-    <!-- Formulario para ingreso diario -->   
-    <div class="input-section">  
-      <label for="fecha">Fecha:</label>       
-      <input type="date" id="fecha">       
-      <label for="cantidad">Ingreso Diario (kg):</label>      
-      <input type="number" id="cantidad" placeholder="Ej. 5000"> 
-      <button onclick="agregarIngreso()">Registrar Ingreso</button> 
+
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">Plan total</div><div class="val" id="kpiPlan">0</div></div>
+      <div class="kpi"><div class="lbl">Real ingresado</div><div class="val" id="kpiReal">0</div></div>
+      <div class="kpi hero"><div class="lbl">Cumplimiento</div><div class="val" id="kpiCump">—</div><div class="sub2" id="kpiSub">sin registros</div></div>
     </div>
-    <!-- Gráfico de Barras -->   
-    <div class="chart-container">  
-      <canvas id="graficoBarras"></canvas>   
+
+    <div class="legend">
+      <span><i class="dot plan36"></i>Plan 3–6</span>
+      <span><i class="dot real36"></i>Real 3–6</span>
+      <span><i class="dot plan67"></i>Plan 6–7</span>
+      <span><i class="dot real67"></i>Real 6–7</span>
     </div>
-    <script>        
-      const PLAN_TOTAL = 43.000;      
-      let totalIngresado = 0;
-        const fechas = [];       
-      const datosIngresados = [];
-        // Configuración Inicial del Gráfico       
-      const ctx = document.getElementById('graficoBarras').getContext('2d');  
-      const grafico = new Chart(ctx, {        
-        type: 'bar',         
-        data: {              
-          labels: fechas,        
-          datasets: [{           
-            label: 'Ingreso Diario (kg)',    
-            data: datosIngresados,           
-            backgroundColor: '#4ea8de',                  
-            borderColor: '#90e0ef',                
-            borderWidth: 1                }]          
-        },            options: {                
-          responsive: true,              
-          plugins: {                  
-            legend: { labels: { color: '#ffffff' } }  
-          },                
-          scales: {                    
-            x: { ticks: { color: '#ffffff' }, grid: { color: '#2b4c7e' } },            
-            y: { ticks: { color: '#ffffff' }, grid: { color: '#2b4c7e' }, beginAtZero: true }             
-          }       
-        }      
+
+    <div class="chartbox">
+      <div class="chart-title">Avance diario</div>
+      <div id="bars" class="bars"></div>
+    </div>
+
+    <div class="chartbox small">
+      <div class="chart-title">Acumulado (plan vs real)</div>
+      <svg id="lineChart" class="linechart"></svg>
+    </div>
+
+    <div class="chartbox">
+      <div class="chart-title">Detalle diario · Real editable a mano <span id="msg"></span><button id="resetReal" class="btn-reset">Reiniciar avance real</button></div>
+      <div class="tablewrap">
+        <table class="trk">
+          <thead>
+            <tr><th>Fecha</th><th>Calibre</th><th>Plan</th><th>Real</th><th>Cumpl.</th></tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <footer>Invermar · Reproceso_salar.xlsx</footer>
+</div>
+
+
+    </div>
+
+    
+<script>
+const xsrfToken = "CfDJ8LgsJxa-MGxMoQBDc2EQ8mMvNW3OUw-ZVK-P0LzpDRURF8d0zvsqssY9GIGorqc9ufqJ3VQRcfoZfMDbsd6d2wK5gxEDEI4exnCKCI1no-xRh26R4cnSsnJ272MRBwNK2pKquD1OwHbEE58jJdGm5TkHkJk2cglBAwqgRndmtNHWQu5Uchm3xNu3uYubpvyCSA";
+
+(function(){
+  const plan = [
+    {f:'2026-07-22', lbl:'22-jul', cal:36, plan:3000},
+    {f:'2026-07-23', lbl:'23-jul', cal:36, plan:3000},
+    {f:'2026-07-24', lbl:'24-jul', cal:36, plan:3000},
+    {f:'2026-07-27', lbl:'27-jul', cal:36, plan:4000},
+    {f:'2026-07-28', lbl:'28-jul', cal:36, plan:4000},
+    {f:'2026-07-29', lbl:'29-jul', cal:36, plan:4000},
+    {f:'2026-07-30', lbl:'30-jul', cal:36, plan:4000},
+    {f:'2026-07-31', lbl:'31-jul', cal:67, plan:1800},
+    {f:'2026-08-03', lbl:'03-ago', cal:67, plan:1800},
+    {f:'2026-08-04', lbl:'04-ago', cal:67, plan:1800},
+    {f:'2026-08-05', lbl:'05-ago', cal:67, plan:1800},
+    {f:'2026-08-06', lbl:'06-ago', cal:67, plan:1800},
+    {f:'2026-08-07', lbl:'07-ago', cal:67, plan:1800},
+    {f:'2026-08-10', lbl:'10-ago', cal:67, plan:1800},
+    {f:'2026-08-11', lbl:'11-ago', cal:67, plan:1800},
+    {f:'2026-08-12', lbl:'12-ago', cal:67, plan:1800},
+    {f:'2026-08-13', lbl:'13-ago', cal:67, plan:1800},
+  ];
+  const maxPlan = 4000;
+  let real = {};
+
+  const barsEl = document.getElementById('bars');
+  const tblBody = document.getElementById('tblBody');
+  const msg = document.getElementById('msg');
+
+  function fmt(n){ return Math.round(n).toLocaleString('es-CL'); }
+
+  function cumpClass(pct){
+    return pct>=95 ? 'cump-good' : pct>=80 ? 'cump-warn' : 'cump-bad';
+  }
+
+  async function persist(){
+    msg.textContent = 'guardando avance…';
+    try{
+      const res = await fetch('/api/reproceso/avance', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-XSRF-TOKEN': xsrfToken
+          },
+          body: JSON.stringify(real)
       });
-        // Poner la fecha actual por defecto    
-      document.getElementById('fecha').valueAsDate = new Date();
-        function agregarIngreso() {           
-          const fechaInput = document.getElementById('fecha').value;           
-          const cantidadInput = parseFloat(document.getElementById('cantidad').value);
-            if (!fechaInput || isNaN(cantidadInput) || cantidadInput <= 0) {         
-              alert("Por favor ingresa una fecha válida y una cantidad mayor a 0.");        
-              return;            
-            }
-            // Validación de fin de semana (Sábado y Domingo)          
-          // Se usa 'T00:00:00' para evitar desfasajes por zona horaria    
-          const fechaSeleccionada = new Date(fechaInput + 'T00:00:00'); 
-          const diaSemana = fechaSeleccionada.getDay(); // 0 = Domingo, 6 = Sábado
-            if (diaSemana === 0 || diaSemana === 6) {               
-              alert("No se pueden ingresar datos en días de fin de semana (sábado o domingo). Por favor elige un día hábil.");                return;            }
-            // Actualizar Totales           
-          totalIngresado += cantidadInput;       
-          const porcentaje = ((totalIngresado / PLAN_TOTAL) * 100).toFixed(2);
-            document.getElementById('realIngresado').innerText = totalIngresado.toLocaleString('es-CL') + " kg";            document.getElementById('cumplimiento').innerText = porcentaje + "%";
-            // Actualizar Gráfico          
-          fechas.push(fechaInput);       
-          datosIngresados.push(cantidadInput);         
-          grafico.update();
-            // Limpiar Input            
-          document.getElementById('cantidad').value = '';    
-        }   
-    </script>
-  </body>
+      if(!res.ok) {
+          console.error('No se pudo guardar el avance real en el servidor');
+          msg.textContent = 'error al guardar';
+      } else {
+          msg.textContent = 'guardado ✓';
+          setTimeout(()=>{ if(msg.textContent==='guardado ✓') msg.textContent=''; }, 1500);
+      }
+    }catch(e){ 
+        console.error('Error guardando avance real', e); 
+        msg.textContent = 'error de red al guardar';
+    }
+  }
+
+  async function saveAndRerender(fecha, val){
+    if(val===''){ delete real[fecha]; } else { real[fecha] = Number(val); }
+    render();
+    await persist();
+  }
+
+  function buildTable(){
+    tblBody.innerHTML = '';
+    plan.forEach(d=>{
+      const r = real[d.f];
+      const tr = document.createElement('tr');
+
+      const tdFecha = document.createElement('td'); tdFecha.textContent = d.lbl; tr.appendChild(tdFecha);
+
+      const tdCal = document.createElement('td'); tdCal.className='cal';
+      tdCal.innerHTML = `<span class="calpill c${d.cal}">${d.cal===36?'3–6':'6–7'}</span>`;
+      tr.appendChild(tdCal);
+
+      const tdPlan = document.createElement('td'); tdPlan.textContent = fmt(d.plan); tr.appendChild(tdPlan);
+
+      const tdReal = document.createElement('td');
+      const inp = document.createElement('input');
+      inp.type='number'; inp.min=0; inp.step=1; inp.className='rowreal'; inp.placeholder='–';
+      inp.value = (r!==undefined && r!==null) ? r : '';
+      inp.addEventListener('change', ()=> saveAndRerender(d.f, inp.value));
+      tdReal.appendChild(inp);
+      tr.appendChild(tdReal);
+
+      const tdCump = document.createElement('td');
+      if(r!==undefined && r!==null && r!==''){
+        const pct = Math.round((Number(r)/d.plan)*100);
+        tdCump.textContent = pct+'%';
+        tdCump.className = cumpClass(pct);
+      } else {
+        tdCump.textContent = '–';
+        tdCump.className = 'cump-none';
+      }
+      tr.appendChild(tdCump);
+
+      tblBody.appendChild(tr);
+    });
+  }
+
+  function render(){
+    barsEl.innerHTML = '';
+    plan.forEach(d=>{
+      const col = document.createElement('div');
+      col.className = 'col c'+d.cal;
+      const ph = Math.max(2, Math.round((d.plan/maxPlan)*78));
+      const r = real[d.f];
+      const planBar = document.createElement('div');
+      planBar.className='planbar';
+      planBar.style.height = ph+'px';
+      planBar.title = d.lbl+' · plan '+fmt(d.plan);
+      col.appendChild(planBar);
+      if(r!==undefined && r!==null && r!==''){
+        const rh = Math.max(2, Math.round((Number(r)/maxPlan)*78));
+        const realBar = document.createElement('div');
+        realBar.className='realbar';
+        realBar.style.height = rh+'px';
+        realBar.title = d.lbl+' · real '+fmt(r);
+        col.appendChild(realBar);
+      }
+      const lbl = document.createElement('div');
+      lbl.className='daylabel';
+      lbl.textContent = d.lbl.slice(0,2);
+      col.appendChild(lbl);
+      barsEl.appendChild(col);
+    });
+
+    const svg = document.getElementById('lineChart');
+    const W = barsEl.clientWidth || 700, H = 56;
+    let cumPlan=0, cumReal=0, totalPlanFull=0;
+    plan.forEach(d=>totalPlanFull+=d.plan);
+    const stepX = W/(plan.length-1);
+    let ptsPlan=[], ptsReal=[];
+    let lastRealIdx=-1;
+    plan.forEach((d,i)=>{
+      cumPlan+=d.plan;
+      const y1 = H - (cumPlan/totalPlanFull)*H;
+      ptsPlan.push(`${i*stepX},${y1}`);
+      const r = real[d.f];
+      if(r!==undefined && r!==null && r!==''){
+        cumReal+=Number(r);
+        lastRealIdx=i;
+      }
+      if(lastRealIdx>=0){
+        const y2 = H - (cumReal/totalPlanFull)*H;
+        ptsReal.push(`${i*stepX},${y2}`);
+      }
+    });
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    svg.innerHTML = `
+      <line x1="0" y1="${H}" x2="${W}" y2="${H}" stroke="#182D38" stroke-width="1"/>
+      <polyline points="${ptsPlan.join(' ')}" fill="none" stroke="#587280" stroke-width="1.6" stroke-dasharray="4,3"/>
+      ${ptsReal.length ? `<polyline points="${ptsReal.join(' ')}" fill="none" stroke="#B792F0" stroke-width="2.2"/>` : ''}
+    `;
+
+    let sumPlan=0, sumReal=0, n=0;
+    plan.forEach(d=>{
+      const r = real[d.f];
+      if(r!==undefined && r!==null && r!==''){
+        sumPlan += d.plan; sumReal += Number(r); n++;
+      }
+    });
+    document.getElementById('kpiPlan').textContent = fmt(totalPlanFull)+' un.';
+    document.getElementById('kpiReal').textContent = fmt(sumReal)+' un.';
+    const kpiCump = document.getElementById('kpiCump');
+    const kpiSub = document.getElementById('kpiSub');
+    if(n===0){ kpiCump.textContent='—'; kpiSub.textContent='sin registros'; }
+    else{
+      const pct = Math.round((sumReal/sumPlan)*100);
+      kpiCump.textContent = pct+'%';
+      kpiSub.textContent = n+' día(s) registrados';
+    }
+
+    buildTable();
+  }
+
+  async function loadInitialData(){
+    msg.textContent = 'cargando avance…';
+    try{
+      const res = await fetch('/api/reproceso/avance');
+      if(res.ok) {
+          real = await res.json();
+          if(typeof real !== 'object' || real === null) {
+              real = {};
+          }
+          msg.textContent = 'avance cargado';
+          setTimeout(()=>{ if(msg.textContent==='avance cargado') msg.textContent=''; }, 1500);
+      } else {
+          msg.textContent = 'sin registros';
+          setTimeout(()=>{ if(msg.textContent==='sin registros') msg.textContent=''; }, 1500);
+      }
+    }catch(e){
+      console.error('Error cargando avance real', e);
+      msg.textContent = 'error de carga';
+    }
+    render();
+  }
+
+  const resetBtn = document.getElementById('resetReal');
+  resetBtn.addEventListener('click', async ()=>{
+    if(!confirm('Esto borra el avance real de TODOS los que usan este dashboard. ¿Continuar?')) return;
+    real = {};
+    render();
+    await persist();
+  });
+
+  loadInitialData();
+})();
+</script>
+
+</body>
 </html>
