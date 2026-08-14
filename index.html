@@ -304,15 +304,19 @@
     <!-- METRICAS DE RESUMEN -->
     <div class="summary-cards">
       <div class="stat-card">
-        <h3>PLAN TOTAL</h3>
-        <div class="value" id="stat-total">43.000 UN.</div>
+        <h3>Total Registrado</h3>
+        <div class="value" id="stat-total">0 Kg</div>
       </div>
       <div class="stat-card">
-        <h3>Total Diario</h3>
-        <div class="value" id="stat-avg">0 UN.</div>
+        <h3>Promedio Diario</h3>
+        <div class="value" id="stat-avg">0 Kg</div>
       </div>
       <div class="stat-card">
-        <h3>Días Registrados</h3>
+        <h3>Día Máximo</h3>
+        <div class="value" id="stat-max">0 Kg</div>
+      </div>
+      <div class="stat-card">
+        <h3>Días con Registro</h3>
         <div class="value" id="stat-days">0 / 35</div>
       </div>
     </div>
@@ -326,7 +330,7 @@
           <i class="fa-chart-column"></i> Gráfico de Producción / Reproceso
         </div>
         <div class="chart-container">
-          <canvas id="reprocesoUNChart"></canvas>
+          <canvas id="reprocesoChart"></canvas>
         </div>
       </div>
 
@@ -342,13 +346,13 @@
           </div>
 
           <div class="form-group">
-            <label for="entry-value">Cantidad (Unidades):</label>
-            <input type="number" id="entry-value" step="1" min="0" placeholder="Ej: 1250" required>
+            <label for="entry-value">Cantidad (Kg / Unidades):</label>
+            <input type="number" id="entry-value" step="0.01" min="0" placeholder="Ej: 1250.5" required>
           </div>
 
           <div class="form-group">
-            <label for="entry-notes">Batch / Calibre:</label>
-            <textarea id="entry-notes" rows="3" placeholder="Ej: X110826VE, 5-6..."></textarea>
+            <label for="entry-notes">Detalle / Observación:</label>
+            <textarea id="entry-notes" rows="3" placeholder="Ej: Reproceso por corte, Turno Mañana..."></textarea>
           </div>
 
           <button type="submit" class="btn-primary">
@@ -371,8 +375,8 @@
           <thead>
             <tr>
               <th>Fecha</th>
-              <th>Cantidad (UN)</th>
-              <th>Batch / Calibre</th>
+              <th>Cantidad (Kg)</th>
+              <th>Detalle / Observaciones</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -403,8 +407,8 @@
     function generateDateRange() {
       const dates = [];
       const year = 2026;
-      let start = new Date(year, 6, 22); // Julio (mes 7)
-      const end = new Date(year, 7, 25);   // Agosto (mes 8)
+      let start = new Date(year, 6, 22); // Julio (mes 6)
+      const end = new Date(year, 7, 25);   // Agosto (mes 7)
 
       while (start <= end) {
         const day = String(start.getDate()).padStart(2, '0');
@@ -457,7 +461,7 @@
       data: {
         labels: dateList.map(d => d.substring(0, 5)), // Mostrar DD/MM
         datasets: [{
-          label: 'Reproceso (UN)',
+          label: 'Reproceso (Kg)',
           data: dateList.map(d => appData[d].value),
           backgroundColor: '#48cae4',
           borderColor: '#00b4d8',
@@ -562,7 +566,7 @@
     // Edición rápida desde la tabla
     window.quickEdit = function(date, field) {
       if (field === 'value') {
-        const newVal = prompt(`Ingrese cantidad para ${date} (UN):`, appData[date].value);
+        const newVal = prompt(`Ingrese cantidad para ${date} (Kg):`, appData[date].value);
         if (newVal !== null) {
           appData[date].value = parseFloat(newVal) || 0;
           saveData();
