@@ -3,58 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invermar Reprocesos</title>
+    <title>Invermar Reprocesos - Control Diario</title>
+    <!-- Cargamos Chart.js desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background-color: #0a192f; /* Azul oscuro profundo */
             color: #e6f1ff;            /* Texto claro */
             font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
         }
 
-        .container {
+        .header {
             text-align: center;
-            padding: 2.5rem;
-            border-radius: 12px;
-            background-color: #112240; /* Tono de azul para la tarjeta */
-            box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
-            max-width: 600px;
-            width: 90%;
-            border: 1px solid #233554;
+            margin-bottom: 2rem;
         }
 
         h1 {
-            color: #64ffda; /* Tono turquesa destacado */
-            margin-bottom: 0.5rem;
+            color: #64ffda; /* Turquesa brillante */
+            margin-bottom: 0.3rem;
             font-size: 2.2rem;
         }
 
         .subtitle {
             color: #8892b0;
-            font-size: 1.1rem;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            margin: 0;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        p {
-            line-height: 1.6;
-            color: #ccd6f6;
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #112240; /* Azul ligeramente más claro */
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+            border: 1px solid #233554;
+        }
+
+        /* Estilos del formulario de ingreso */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #8892b0;
+        }
+
+        select, input, button {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #233554;
+            background-color: #0a192f;
+            color: #e6f1ff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        select:focus, input:focus {
+            border-color: #64ffda;
+        }
+
+        button {
+            background-color: #64ffda;
+            color: #0a192f;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #4cd8b2;
+        }
+
+        /* Contenedor del gráfico */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="header">
         <h1>Invermar Reprocesos</h1>
-        <p class="subtitle">Planta de Proceso</p>
-        <p>Bienvenido al portal del área de Reprocesos. Desde aquí puedes acceder a la información, registros e informes de la planta.</p>
+        <p class="subtitle">Control y Registro Diario de Producción</p>
     </div>
 
+    <div class="main-container">
+        <!-- Formulario de ingreso de datos -->
+        <div class="card">
+            <h2 style="margin-top: 0; color: #ccd6f6; font-size: 1.2rem;">Ingreso Diario de Datos</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="fechaSelect">Seleccionar Fecha:</label>
+                    <select id="fechaSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidadInput">Valor / Cantidad:</label>
+                    <input type="number" id="cantidadInput" placeholder="Ej: 150" min="0">
+                </div>
+                <button onclick="guardarDato()">Registrar Dato</button>
+            </div>
+        </div>
+
+        <!-- Gráfico de barras -->
+        <div class="card">
+            <div class="chart-container">
+                <canvas id="graficoBarras"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generar lista de días desde el 22 de Julio hasta el 25 de Agosto
+        const fechas = [];
+        const valores = [];
+
+        // Rango: 22 de julio al 25 de agosto
+        let fechaInicio = new Date(2026, 6, 22); // Mes 6 es Julio en JS (0-indexed)
+        let fechaFin = new Date(2026, 7, 25);    // Mes 7 es Agosto
+
+        const select = document.getElementById('fechaSelect');
+
+        while (fechaInicio <= fechaFin) {
+            const dia = String(fechaInicio.getDate()).padStart(2, '0');
+            const mes = fechaInicio.getMonth() === 6 ? 'Jul' : 'Ago';
+            const etiqueta = `${dia} ${mes}`;
+            
+            fechas.push(etiqueta);
+            valores.push(0); // Valor inicial predeterminado
+
+            // Agregar opción al <select>
+            const option = document.createElement('option');
+            option.value = fechas.length - 1; // Índice del arreglo
+            option.textContent = etiqueta;
+            select.appendChild(option);
+
+            fechaInicio.setDate(fechaInicio.getDate() + 1);
+        }
+
+        // Configuración de Chart.js
+        const ctx = document.getElementById('graficoBarras').getContext('2d');
+        const miGrafico = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: fechas,
+                datasets: [{
+                    label: 'Registros Diarios',
+                    data: valores,
+                    backgroundColor: '#64ffda',
+                    borderColor: '#64ffda',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#8892b0' }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#8892b0', font: { size: 10 } },
+                        grid: { color: '#1d2d50' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#8892b0' },
+                        grid: { color: '#1d2d50' }
+                    }
+                }
+            }
+        });
+
+        // Función para actualizar los valores desde el formulario
+        function guardarDato() {
+            const index = document.getElementById('fechaSelect').value;
+            const cantidad = parseFloat(document.getElementById('cantidadInput').value);
+
+            if (isNaN(cantidad)) {
+                alert("Por favor, ingresa una cantidad válida.");
+                return;
+            }
+
+            // Actualizar el gráfico
+            miGrafico.data.datasets[0].data[index] = cantidad;
+            miGrafico.update();
+
+            // Limpiar campo de texto
+            document.getElementById('cantidadInput').value = '';
+        }
+    </script>
 </body>
 </html>
