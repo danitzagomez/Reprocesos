@@ -17,6 +17,7 @@
       --text-muted: #94a3b8;
       --border-color: #1e293b;
       --danger: #ef4444;
+      --success: #10b981;
     }
 
     * {
@@ -99,6 +100,22 @@
       font-size: 1.8rem;
       font-weight: bold;
       color: var(--primary);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: var(--card-bg-light);
+      border-radius: 8px;
+      height: 10px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
     }
 
     .grid-2col {
@@ -284,7 +301,15 @@
     <div class="summary-cards">
       <div class="stat-card">
         <h3>Plan Total</h3>
+        <div class="value">43.000 UN</div>
+        <span style="font-size:0.75rem; color:var(--text-muted)">Meta Global</span>
+      </div>
+      <div class="stat-card">
+        <h3>Acumulado Actual</h3>
         <div class="value" id="stat-total">0 UN</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="plan-progress"></div>
+        </div>
       </div>
       <div class="stat-card">
         <h3>Promedio Diario</h3>
@@ -317,8 +342,8 @@
           </div>
 
           <div class="form-group">
-            <label for="entry-value">Cantidad (Unidades):</label>
-            <input type="number" id="entry-value" step="any" min="0" placeholder="Ej: 1500">
+            <label for="entry-value">Cantidad (Unidades Enteras):</label>
+            <input type="text" id="entry-value" inputmode="numeric" pattern="[0-9]*" placeholder="Ej: 1500 (sin comas ni puntos)">
           </div>
 
           <div class="form-group">
@@ -369,6 +394,8 @@
   </div>
 
   <script>
+    const PLAN_TOTAL = 43000;
+
     function generateDateRange() {
       const dates = [];
       const today = new Date();
@@ -395,6 +422,11 @@
     const inputVal = document.getElementById('entry-value');
     const inputNotes = document.getElementById('entry-notes');
 
+    // Bloquear comas, puntos o caracteres no numéricos al escribir
+    inputVal.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
     dateList.forEach(date => {
       const opt = document.createElement('option');
       opt.value = date;
@@ -405,7 +437,8 @@
     function loadSelectedDateData() {
       const selected = selectDate.value;
       if (appData[selected]) {
-        inputVal.value = appData[selected].value > 0 ? appData[selected].value : '';
+        const val = parseInt(appData[selected].value, 10);
+        inputVal.value = val > 0 ? val : '';
         inputNotes.value = appData[selected].notes || '';
       }
     }
@@ -424,7 +457,7 @@
         labels: dateList.map(d => d.substring(0, 5)),
         datasets: [{
           label: 'Reproceso (UN)',
-          data: dateList.map(d => Number(appData[d].value) || 0),
+          data: dateList.map(d => parseInt(appData[d].value, 10) || 0),
           backgroundColor: '#38bdf8',
           borderColor: '#0284c7',
           borderWidth: 1,
@@ -452,7 +485,7 @@
     });
 
     function updateUI() {
-      myChart.data.datasets[0].data = dateList.map(d => Number(appData[d].value) || 0);
+      myChart.data.datasets[0].data = dateList.map(d => parseInt(appData[d].value, 10) || 0);
       myChart.update();
 
       const tbody = document.getElementById('table-body');
@@ -462,7 +495,7 @@
       let count = 0;
 
       dateList.forEach(date => {
-        const val = Number(appData[date].value) || 0;
+        const val = parseInt(appData[date].value, 10) || 0;
         const notes = appData[date].notes || '';
 
         if (val > 0) {
@@ -491,15 +524,18 @@
       });
 
       document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} UN`;
-      document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} UN`;
+      document.getElementById('stat-avg').textContent = `${count > 0 ? Math.round(total / count).toLocaleString('es-CL') : 0} UN`;
       document.getElementById('stat-days').textContent = `${count} / ${dateList.length}`;
+
+      const progressPct = Math.min((total / PLAN_TOTAL) * 100, 100);
+      document.getElementById('plan-progress').style.width = `${progressPct}%`;
     }
 
     document.getElementById('entry-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const date = selectDate.value;
-      const rawVal = inputVal.value.trim();
-      const val = rawVal === '' ? 0 : parseFloat(rawVal);
+      const cleanVal = inputVal.value.replace(/[^0-9]/g, '');
+      const val = cleanVal === '' ? 0 : parseInt(cleanVal, 10);
 
       appData[date] = {
         value: isNaN(val) ? 0 : val,
@@ -507,14 +543,15 @@
       };
 
       saveData();
-      alert(`Guardado correctamente para el ${date}: ${appData[date].value} UN`);
+      alert(`Guardado correctamente para el ${date}: ${appData[date].value.toLocaleString('es-CL')} UN`);
     });
 
     window.quickEdit = function(date, field) {
       if (field === 'value') {
-        const newVal = prompt(`Nueva cantidad para ${date} (UN):`, appData[date].value);
+        const newVal = prompt(`Nueva cantidad entera para ${date} (UN - sin comas):`, appData[date].value);
         if (newVal !== null) {
-          const parsed = parseFloat(newVal);
+          const cleanVal = newVal.replace(/[^0-9]/g, '');
+          const parsed = parseInt(cleanVal, 10);
           appData[date].value = isNaN(parsed) ? 0 : parsed;
           saveData();
           if (selectDate.value === date) loadSelectedDateData();
@@ -555,7 +592,6 @@
       downloadAnchor.remove();
     });
 
-    // Carga inicial explícita
     loadSelectedDateData();
     updateUI();
   </script>
