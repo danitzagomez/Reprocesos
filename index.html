@@ -305,15 +305,11 @@
     <div class="summary-cards">
       <div class="stat-card">
         <h3>Plan Total</h3>
-        <div class="value" id="43.000">43.000 UN</div>
+        <div class="value" id="stat-total">43.000 UN</div>
       </div>
       <div class="stat-card">
         <h3>Ingreso Diario</h3>
         <div class="value" id="stat-avg">0 UN</div>
-      </div>
-      <div class="stat-card">
-           <h3>Día Máximo</h3>
-        <div class="value" id="stat-max">0 UN</div>
       </div>
       <div class="stat-card">
         <h3>Días con Registro</h3>
@@ -512,7 +508,6 @@
 
       let total = 0;
       let count = 0;
-      let max = 0;
 
       dateList.forEach(date => {
         const val = parseFloat(appData[date].value) || 0;
@@ -521,7 +516,6 @@
         if (val > 0) {
           total += val;
           count++;
-          if (val > max) max = val;
         }
 
         const tr = document.createElement('tr');
@@ -545,9 +539,11 @@
       });
 
       // 3. Actualizar Métricas
-      document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} UN`;
+      const statTotal = document.getElementById('stat-total');
+      if (statTotal) {
+        statTotal.textContent = `${total.toLocaleString('es-CL')} UN`;
+      }
       document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} UN`;
-      document.getElementById('stat-max').textContent = `${max.toLocaleString('es-CL')} UN`;
       document.getElementById('stat-days').textContent = `${count} / ${dateList.length}`;
     }
 
