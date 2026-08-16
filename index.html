@@ -317,7 +317,7 @@
       </div>
       <div class="stat-card">
         <h3>Días Registrados</h3>
-        <div class="value" id="stat-days">0 / 30</div>
+        <div class="value" id="stat-days">0 / 0</div>
       </div>
     </div>
 
@@ -396,20 +396,33 @@
   <script>
     const PLAN_TOTAL = 43000;
 
-    function generateDateRange() {
+    // Días a excluir por mes
+    const excludedJulyDays = [25, 26];
+    const excludedAugustDays = [1, 2, 8, 9, 15, 16, 22, 23];
+
+    function generateCustomDateRange() {
       const dates = [];
-      const today = new Date();
-      for (let i = 29; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        dates.push(`${day}/${month}/${d.getFullYear()}`);
+
+      // Julio: 22 al 31
+      for (let day = 22; day <= 31; day++) {
+        if (!excludedJulyDays.includes(day)) {
+          const formattedDay = String(day).padStart(2, '0');
+          dates.push(`${formattedDay}/07/2026`);
+        }
       }
+
+      // Agosto: 1 al 22
+      for (let day = 1; day <= 22; day++) {
+        if (!excludedAugustDays.includes(day)) {
+          const formattedDay = String(day).padStart(2, '0');
+          dates.push(`${formattedDay}/08/2026`);
+        }
+      }
+
       return dates;
     }
 
-    const dateList = generateDateRange();
+    const dateList = generateCustomDateRange();
     let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
     dateList.forEach(date => {
