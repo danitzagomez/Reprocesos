@@ -10,17 +10,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-color: #0b132b;
-      --card-bg: #1c2541;
-      --card-bg-light: #232f52;
-      --primary: #48cae4;
-      --accent: #00b4d8;
-      --accent-hover: #90e0ef;
-      --text-color: #edf2f4;
-      --text-muted: #a0aec0;
-      --border-color: #3a506b;
-      --danger: #ef233c;
-      --success: #38b000;
+      --bg-color: #060d1b;         /* Azul muy oscuro */
+      --card-bg: #0f1a30;          /* Azul oscuro para tarjetas */
+      --card-bg-light: #182643;    /* Azul medio para inputs/tablas */
+      --primary: #38bdf8;          /* Azul brillante / celeste */
+      --accent: #0284c7;           /* Azul acento */
+      --accent-hover: #075985;     /* Azul hover */
+      --text-color: #f1f5f9;       /* Texto blanco suave */
+      --text-muted: #94a3b8;      /* Texto secundario */
+      --border-color: #1e293b;     /* Bordes sutiles */
+      --danger: #ef4444;
+      --success: #10b981;
     }
 
     * {
@@ -42,8 +42,9 @@
       margin: 0 auto;
     }
 
+    /* ENCABEZADO */
     header {
-      background: linear-gradient(135deg, #1c2541 0%, #0b132b 100%);
+      background: linear-gradient(135deg, #0f1a30 0%, #060d1b 100%);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 24px;
@@ -51,7 +52,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
 
     .brand {
@@ -76,6 +77,7 @@
       font-size: 0.9rem;
     }
 
+    /* TARJETAS DE MÉTRICAS */
     .summary-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -89,11 +91,11 @@
       border-radius: 10px;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
 
     .stat-card h3 {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -106,6 +108,7 @@
       color: var(--primary);
     }
 
+    /* DISPOSICIÓN PRINCIPAL */
     .grid-2col {
       display: grid;
       grid-template-columns: 1fr;
@@ -124,7 +127,7 @@
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .card-title {
@@ -145,6 +148,7 @@
       width: 100%;
     }
 
+    /* FORMULARIOS E INPUTS */
     form {
       display: flex;
       flex-direction: column;
@@ -179,6 +183,7 @@
       border-color: var(--primary);
     }
 
+    /* BOTONES */
     button {
       padding: 12px;
       border: none;
@@ -198,11 +203,12 @@
 
     .btn-primary {
       background-color: var(--accent);
-      color: #0b132b;
+      color: #ffffff;
     }
 
     .btn-primary:hover {
-      background-color: var(--accent-hover);
+      background-color: var(--primary);
+      color: #060d1b;
     }
 
     .btn-danger {
@@ -218,6 +224,7 @@
       color: white;
     }
 
+    /* TABLA */
     .table-responsive {
       overflow-x: auto;
       max-height: 400px;
@@ -245,7 +252,7 @@
     }
 
     tr:hover {
-      background-color: rgba(255,255,255,0.03);
+      background-color: rgba(255, 255, 255, 0.02);
     }
 
     .editable-cell {
@@ -267,12 +274,13 @@
 
     .badge {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 12px;
+      border-radius: 6px;
       font-size: 0.8rem;
       font-weight: 600;
       background-color: var(--card-bg-light);
-      color: var(--accent);
+      color: var(--primary);
+      border: 1px solid var(--border-color);
     }
 
     footer {
@@ -293,7 +301,7 @@
         <i class="fa-solid fa-fish-fins"></i>
         <div>
           <h1>Invermar Reprocesos</h1>
-          <p>Panel de Control y Monitoreo Diario (22 Jul - 25 Ago)</p>
+          <p>Sistema de Control y Monitoreo de Producción</p>
         </div>
       </div>
       <div class="badge">
@@ -301,43 +309,39 @@
       </div>
     </header>
 
-    <!-- METRICAS DE RESUMEN -->
+    <!-- RESUMEN DE MÉTRICAS -->
     <div class="summary-cards">
       <div class="stat-card">
         <h3>Plan Total</h3>
-        <div class="value" id="43.000">43.000 UN</div>
+        <div class="value" id="stat-total">0 UN</div>
       </div>
       <div class="stat-card">
-        <h3>Ingreso Diario</h3>
+        <h3>Promedio Diario</h3>
         <div class="value" id="stat-avg">0 UN</div>
       </div>
       <div class="stat-card">
-           <h3>Día Máximo</h3>
-        <div class="value" id="stat-max">0 UN</div>
-      </div>
-      <div class="stat-card">
-        <h3>Días con Registro</h3>
-        <div class="value" id="stat-days">0 / 35</div>
+        <h3>Días Registrados</h3>
+        <div class="value" id="stat-days">0 / 30</div>
       </div>
     </div>
 
-    <!-- SECCIÓN PRINCIPAL: GRAFICO Y FORMULARIO DE INGRESO -->
+    <!-- SECCIÓN PRINCIPAL: GRÁFICO Y FORMULARIO -->
     <div class="grid-2col">
       
       <!-- GRÁFICO DE BARRAS -->
       <div class="card">
         <div class="card-title">
-          <i class="fa-chart-column"></i> Gráfico de Producción / Reproceso
+          <i class="fa-chart-column"></i> Registro de Producción Diaria
         </div>
         <div class="chart-container">
           <canvas id="reprocesoChart"></canvas>
         </div>
       </div>
 
-      <!-- FORMULARIO DE INGRESO DIARIO -->
+      <!-- FORMULARIO DE INGRESO -->
       <div class="card">
         <div class="card-title">
-          <i class="fa-pen-to-square"></i> Ingreso / Edición Rápida
+          <i class="fa-pen-to-square"></i> Ingreso / Edición
         </div>
         <form id="entry-form">
           <div class="form-group">
@@ -347,12 +351,12 @@
 
           <div class="form-group">
             <label for="entry-value">Cantidad (Unidades):</label>
-            <input type="number" id="entry-value" step="01" min="0" placeholder="Ej: 12.505" required>
+            <input type="number" id="entry-value" step="1" min="0" placeholder="Ej: 1500" required>
           </div>
 
           <div class="form-group">
-            <label for="entry-notes">Batch / Calibre:</label>
-            <textarea id="entry-notes" rows="3" placeholder="Ej:X110826VE, 5-6..."></textarea>
+            <label for="entry-notes">Batch / Observaciones:</label>
+            <textarea id="entry-notes" rows="3" placeholder="Ej: Lote X123, Calibre 5-6..."></textarea>
           </div>
 
           <button type="submit" class="btn-primary">
@@ -363,11 +367,11 @@
 
     </div>
 
-    <!-- SECCIÓN TABLA DETALLE DIARIO -->
+    <!-- TABLA DE DETALLE DIARIO -->
     <div class="card">
       <div class="card-title" style="justify-content: space-between;">
-        <span><i class="fa-table-list"></i> Detalle Diario (22 Julio - 25 Agosto)</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">* Haz clic en la tabla para modificar rápido</span>
+        <span><i class="fa-table-list"></i> Detalle General</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">* Clic en las celdas para edición rápida</span>
       </div>
 
       <div class="table-responsive">
@@ -376,19 +380,19 @@
             <tr>
               <th>Fecha</th>
               <th>Cantidad (UN)</th>
-              <th>Batch / Calibre</th>
+              <th>Batch / Detalle</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody id="table-body">
-            <!-- Las filas se generan con Javascript -->
+            <!-- Filas generadas dinámicamente -->
           </tbody>
         </table>
       </div>
 
       <div class="actions">
-        <button id="btn-export" class="btn-primary" style="background-color: #2a9d8f;">
-          <i class="fa-file-excel"></i> Exportar a JSON
+        <button id="btn-export" class="btn-primary" style="background-color: #0d9488;">
+          <i class="fa-file-excel"></i> Exportar JSON
         </button>
         <button id="btn-reset" class="btn-danger">
           <i class="fa-trash"></i> Borrar Todo
@@ -397,48 +401,43 @@
     </div>
 
     <footer>
-      <p>&copy; 2026 Invermar Reprocesos - Sistema de Registro Interno en GitHub Pages</p>
+      <p>&copy; 2026 Invermar Reprocesos - Control Interno</p>
     </footer>
 
   </div>
 
   <script>
-    // Generar rango de fechas desde 22 de Julio hasta 25 de Agosto
+    // Generar un rango de 30 días recientes
     function generateDateRange() {
       const dates = [];
-      const year = 2026;
-      let start = new Date(year, 6, 22); // Julio (mes 7)
-      const end = new Date(year, 7, 25);   // Agosto (mes 8)
-
-      while (start <= end) {
-        const day = String(start.getDate()).padStart(2, '0');
-        const month = String(start.getMonth() + 1).padStart(2, '0');
-        const dateStr = `${day}/${month}/${start.getFullYear()}`;
-        dates.push(dateStr);
-        start.setDate(start.getDate() + 1);
+      const today = new Date();
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        dates.push(`${day}/${month}/${d.getFullYear()}`);
       }
       return dates;
     }
 
     const dateList = generateDateRange();
 
-    // Estado de datos (LocalStorage o Vacío)
+    // Cargar datos de LocalStorage
     let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
-    // Asegurar estructura
     dateList.forEach(date => {
       if (!appData[date]) {
         appData[date] = { value: 0, notes: '' };
       }
     });
 
-    // Guardar en LocalStorage
     function saveData() {
       localStorage.setItem('invermar_reprocesos_data', JSON.stringify(appData));
       updateUI();
     }
 
-    // Inicializar Select de Fechas
+    // Inicializar menú desplegable de fechas
     const selectDate = document.getElementById('entry-date');
     dateList.forEach(date => {
       const opt = document.createElement('option');
@@ -447,27 +446,26 @@
       selectDate.appendChild(opt);
     });
 
-    // Cargar datos en el formulario al cambiar fecha
     selectDate.addEventListener('change', () => {
       const selected = selectDate.value;
       document.getElementById('entry-value').value = appData[selected].value || '';
       document.getElementById('entry-notes').value = appData[selected].notes || '';
     });
 
-    // Inicializar Chart.js
+    // Configurar gráfico de Chart.js
     const ctx = document.getElementById('reprocesoChart').getContext('2d');
     const myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: dateList.map(d => d.substring(0, 5)), // Mostrar DD/MM
+        labels: dateList.map(d => d.substring(0, 5)),
         datasets: [{
           label: 'Reproceso (UN)',
           data: dateList.map(d => appData[d].value),
-          backgroundColor: '#48cae4',
-          borderColor: '#00b4d8',
+          backgroundColor: '#38bdf8',
+          borderColor: '#0284c7',
           borderWidth: 1,
           borderRadius: 4,
-          hoverBackgroundColor: '#90e0ef'
+          hoverBackgroundColor: '#7dd3fc'
         }]
       },
       options: {
@@ -476,16 +474,16 @@
         scales: {
           x: {
             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#a0aec0', font: { size: 10 } }
+            ticks: { color: '#94a3b8', font: { size: 10 } }
           },
           y: {
             beginAtZero: true,
-            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-            ticks: { color: '#a0aec0' }
+            grid: { color: 'rgba(255, 255, 255, 0.08)' },
+            ticks: { color: '#94a3b8' }
           }
         },
         plugins: {
-          legend: { labels: { color: '#edf2f4' } },
+          legend: { labels: { color: '#f1f5f9' } },
           tooltip: {
             callbacks: {
               afterBody: function(context) {
@@ -500,19 +498,16 @@
       }
     });
 
-    // Actualizar Interfaz (Tabla, Gráfico y Estadísticas)
+    // Actualizar la interfaz de usuario
     function updateUI() {
-      // 1. Actualizar Gráfico
       myChart.data.datasets[0].data = dateList.map(d => appData[d].value);
       myChart.update();
 
-      // 2. Actualizar Tabla
       const tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
 
       let total = 0;
       let count = 0;
-      let max = 0;
 
       dateList.forEach(date => {
         const val = parseFloat(appData[date].value) || 0;
@@ -521,19 +516,18 @@
         if (val > 0) {
           total += val;
           count++;
-          if (val > max) max = val;
         }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><strong>${date}</strong></td>
           <td class="editable-cell" onclick="quickEdit('${date}', 'value')">
-            <span style="color: ${val > 0 ? '#48cae4' : '#636c76'}; font-weight: bold;">
+            <span style="color: ${val > 0 ? '#38bdf8' : '#64748b'}; font-weight: bold;">
               ${val.toLocaleString('es-CL')} UN
             </span>
           </td>
           <td class="editable-cell" onclick="quickEdit('${date}', 'notes')">
-            ${notes ? notes : '<i style="color: #636c76;">Sin detalle</i>'}
+            ${notes ? notes : '<i style="color: #64748b;">Sin detalle</i>'}
           </td>
           <td>
             <button class="btn-danger" onclick="clearDay('${date}')" title="Limpiar Día">
@@ -544,14 +538,12 @@
         tbody.appendChild(tr);
       });
 
-      // 3. Actualizar Métricas
       document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} UN`;
       document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} UN`;
-      document.getElementById('stat-max').textContent = `${max.toLocaleString('es-CL')} UN`;
       document.getElementById('stat-days').textContent = `${count} / ${dateList.length}`;
     }
 
-    // Manejo del Formulario
+    // Guardar mediante el formulario
     document.getElementById('entry-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const date = selectDate.value;
@@ -560,19 +552,19 @@
 
       appData[date] = { value: val, notes: notes };
       saveData();
-      alert(`Datos guardados correctamente para el día ${date}`);
+      alert(`Guardado con éxito para el ${date}`);
     });
 
-    // Edición rápida desde la tabla
+    // Funciones de edición y limpieza
     window.quickEdit = function(date, field) {
       if (field === 'value') {
-        const newVal = prompt(`Ingrese cantidad para ${date} (UN):`, appData[date].value);
+        const newVal = prompt(`Nueva cantidad para ${date} (UN):`, appData[date].value);
         if (newVal !== null) {
           appData[date].value = parseFloat(newVal) || 0;
           saveData();
         }
       } else if (field === 'notes') {
-        const newNotes = prompt(`Ingrese detalle/observación para ${date}:`, appData[date].notes);
+        const newNotes = prompt(`Nuevo detalle para ${date}:`, appData[date].notes);
         if (newNotes !== null) {
           appData[date].notes = newNotes;
           saveData();
@@ -580,23 +572,20 @@
       }
     };
 
-    // Limpiar un día específico
     window.clearDay = function(date) {
-      if (confirm(`¿Deseas borrar los datos del día ${date}?`)) {
+      if (confirm(`¿Limpiar datos del ${date}?`)) {
         appData[date] = { value: 0, notes: '' };
         saveData();
       }
     };
 
-    // Borrar todo
     document.getElementById('btn-reset').addEventListener('click', () => {
-      if (confirm('¿Estás seguro de que deseas borrar TODOS los registros? Esta acción no se puede deshacer.')) {
+      if (confirm('¿Deseas borrar TODOS los registros?')) {
         dateList.forEach(d => appData[d] = { value: 0, notes: '' });
         saveData();
       }
     });
 
-    // Exportar datos
     document.getElementById('btn-export').addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -607,7 +596,6 @@
       downloadAnchor.remove();
     });
 
-    // Cargar formulario inicial
     selectDate.dispatchEvent(new Event('change'));
     updateUI();
   </script>
