@@ -4,23 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invermar Reprocesos - Control Diario</title>
-  <!-- Chart.js para los gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- FontAwesome para íconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-color: #0b132b;
-      --card-bg: #1c2541;
-      --card-bg-light: #232f52;
-      --primary: #48cae4;
-      --accent: #00b4d8;
-      --accent-hover: #90e0ef;
-      --text-color: #edf2f4;
-      --text-muted: #a0aec0;
-      --border-color: #3a506b;
-      --danger: #ef233c;
-      --success: #38b000;
+      --bg-color: #060d1b;
+      --card-bg: #0f1a30;
+      --card-bg-light: #182643;
+      --primary: #38bdf8;
+      --accent: #0284c7;
+      --text-color: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #1e293b;
+      --danger: #ef4444;
+      --success: #10b981;
     }
 
     * {
@@ -43,7 +40,7 @@
     }
 
     header {
-      background: linear-gradient(135deg, #1c2541 0%, #0b132b 100%);
+      background: linear-gradient(135deg, #0f1a30 0%, #060d1b 100%);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 24px;
@@ -51,7 +48,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
 
     .brand {
@@ -67,7 +64,6 @@
 
     .brand h1 {
       font-size: 1.8rem;
-      letter-spacing: 0.5px;
       color: #ffffff;
     }
 
@@ -89,11 +85,11 @@
       border-radius: 10px;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
 
     .stat-card h3 {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -104,6 +100,22 @@
       font-size: 1.8rem;
       font-weight: bold;
       color: var(--primary);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: var(--card-bg-light);
+      border-radius: 8px;
+      height: 10px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
     }
 
     .grid-2col {
@@ -124,7 +136,7 @@
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .card-title {
@@ -172,7 +184,6 @@
       color: var(--text-color);
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
     }
 
     select:focus, input:focus, textarea:focus {
@@ -185,24 +196,20 @@
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
-
     .btn-primary {
       background-color: var(--accent);
-      color: #0b132b;
+      color: #ffffff;
     }
 
     .btn-primary:hover {
-      background-color: var(--accent-hover);
+      background-color: var(--primary);
+      color: #060d1b;
     }
 
     .btn-danger {
@@ -238,24 +245,16 @@
     th {
       background-color: var(--card-bg-light);
       color: var(--primary);
-      font-weight: 600;
       position: sticky;
       top: 0;
-      z-index: 10;
-    }
-
-    tr:hover {
-      background-color: rgba(255,255,255,0.03);
     }
 
     .editable-cell {
       cursor: pointer;
-      transition: background-color 0.2s;
     }
 
     .editable-cell:hover {
       background-color: var(--card-bg-light);
-      outline: 1px dashed var(--primary);
     }
 
     .actions {
@@ -267,12 +266,12 @@
 
     .badge {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 12px;
+      border-radius: 6px;
       font-size: 0.8rem;
-      font-weight: 600;
       background-color: var(--card-bg-light);
-      color: var(--accent);
+      color: var(--primary);
+      border: 1px solid var(--border-color);
     }
 
     footer {
@@ -286,54 +285,55 @@
 <body>
 
   <div class="container">
-    
-    <!-- ENCABEZADO -->
     <header>
       <div class="brand">
         <i class="fa-solid fa-fish-fins"></i>
         <div>
           <h1>Invermar Reprocesos</h1>
-          <p>Panel de Control y Monitoreo Diario (22 Jul - 25 Ago)</p>
+          <p>Sistema de Control y Monitoreo de Producción</p>
         </div>
       </div>
       <div class="badge">
-        <i class="fa-solid fa-database"></i> Datos Almacenados Localmente
+        <i class="fa-solid fa-database"></i> Registro Activo
       </div>
     </header>
 
-    <!-- METRICAS DE RESUMEN -->
     <div class="summary-cards">
       <div class="stat-card">
         <h3>Plan Total</h3>
-        <div class="value" id="stat-total">43.000 UN</div>
+        <div class="value">43.000 UN</div>
+        <span style="font-size:0.75rem; color:var(--text-muted)">Meta Global</span>
       </div>
       <div class="stat-card">
-        <h3>Ingreso Diario</h3>
+        <h3>Acumulado Actual</h3>
+        <div class="value" id="stat-total">0 UN</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="plan-progress"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Promedio Diario</h3>
         <div class="value" id="stat-avg">0 UN</div>
       </div>
       <div class="stat-card">
-        <h3>Días con Registro</h3>
-        <div class="value" id="stat-days">0 / 35</div>
+        <h3>Días Registrados</h3>
+        <div class="value" id="stat-days">0 / 0</div>
       </div>
     </div>
 
-    <!-- SECCIÓN PRINCIPAL: GRAFICO Y FORMULARIO DE INGRESO -->
     <div class="grid-2col">
-      
-      <!-- GRÁFICO DE BARRAS -->
       <div class="card">
         <div class="card-title">
-          <i class="fa-chart-column"></i> Gráfico de Producción / Reproceso
+          <i class="fa-chart-column"></i> Registro de Producción Diaria
         </div>
         <div class="chart-container">
           <canvas id="reprocesoChart"></canvas>
         </div>
       </div>
 
-      <!-- FORMULARIO DE INGRESO DIARIO -->
       <div class="card">
         <div class="card-title">
-          <i class="fa-pen-to-square"></i> Ingreso / Edición Rápida
+          <i class="fa-pen-to-square"></i> Ingreso / Edición
         </div>
         <form id="entry-form">
           <div class="form-group">
@@ -342,13 +342,13 @@
           </div>
 
           <div class="form-group">
-            <label for="entry-value">Cantidad (Unidades):</label>
-            <input type="number" id="entry-value" step="01" min="0" placeholder="Ej: 12.505" required>
+            <label for="entry-value">Cantidad (Unidades Enteras):</label>
+            <input type="text" id="entry-value" inputmode="numeric" pattern="[0-9]*" placeholder="Ej: 1500 (sin comas ni puntos)">
           </div>
 
           <div class="form-group">
-            <label for="entry-notes">Batch / Calibre:</label>
-            <textarea id="entry-notes" rows="3" placeholder="Ej:X110826VE, 5-6..."></textarea>
+            <label for="entry-notes">Batch / Observaciones:</label>
+            <textarea id="entry-notes" rows="3" placeholder="Ej: Lote X123, Calibre 5-6..."></textarea>
           </div>
 
           <button type="submit" class="btn-primary">
@@ -356,14 +356,12 @@
           </button>
         </form>
       </div>
-
     </div>
 
-    <!-- SECCIÓN TABLA DETALLE DIARIO -->
     <div class="card">
       <div class="card-title" style="justify-content: space-between;">
-        <span><i class="fa-table-list"></i> Detalle Diario (22 Julio - 25 Agosto)</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">* Haz clic en la tabla para modificar rápido</span>
+        <span><i class="fa-table-list"></i> Detalle General</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">* Clic en las celdas para edición rápida</span>
       </div>
 
       <div class="table-responsive">
@@ -372,19 +370,17 @@
             <tr>
               <th>Fecha</th>
               <th>Cantidad (UN)</th>
-              <th>Batch / Calibre</th>
+              <th>Batch / Detalle</th>
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="table-body">
-            <!-- Las filas se generan con Javascript -->
-          </tbody>
+          <tbody id="table-body"></tbody>
         </table>
       </div>
 
       <div class="actions">
-        <button id="btn-export" class="btn-primary" style="background-color: #2a9d8f;">
-          <i class="fa-file-excel"></i> Exportar a JSON
+        <button id="btn-export" class="btn-primary" style="background-color: #0d9488;">
+          <i class="fa-file-excel"></i> Exportar JSON
         </button>
         <button id="btn-reset" class="btn-danger">
           <i class="fa-trash"></i> Borrar Todo
@@ -393,49 +389,57 @@
     </div>
 
     <footer>
-      <p>&copy; 2026 Invermar Reprocesos - Sistema de Registro Interno en GitHub Pages</p>
+      <p>&copy; 2026 Invermar Reprocesos - Control Interno</p>
     </footer>
-
   </div>
 
   <script>
-    // Generar rango de fechas desde 22 de Julio hasta 25 de Agosto
-    function generateDateRange() {
-      const dates = [];
-      const year = 2026;
-      let start = new Date(year, 6, 22); // Julio (mes 7)
-      const end = new Date(year, 7, 25);   // Agosto (mes 8)
+    const PLAN_TOTAL = 43000;
 
-      while (start <= end) {
-        const day = String(start.getDate()).padStart(2, '0');
-        const month = String(start.getMonth() + 1).padStart(2, '0');
-        const dateStr = `${day}/${month}/${start.getFullYear()}`;
-        dates.push(dateStr);
-        start.setDate(start.getDate() + 1);
+    // Días a excluir por mes
+    const excludedJulyDays = [25, 26];
+    const excludedAugustDays = [1, 2, 8, 9, 15, 16, 22, 23];
+
+    function generateCustomDateRange() {
+      const dates = [];
+
+      // Julio: 22 al 31
+      for (let day = 22; day <= 31; day++) {
+        if (!excludedJulyDays.includes(day)) {
+          const formattedDay = String(day).padStart(2, '0');
+          dates.push(`${formattedDay}/07/2026`);
+        }
       }
+
+      // Agosto: 1 al 28
+      for (let day = 1; day <= 22; day++) {
+        if (!excludedAugustDays.includes(day)) {
+          const formattedDay = String(day).padStart(2, '0');
+          dates.push(`${formattedDay}/08/2026`);
+        }
+      }
+
       return dates;
     }
 
-    const dateList = generateDateRange();
-
-    // Estado de datos (LocalStorage o Vacío)
+    const dateList = generateCustomDateRange();
     let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
-    // Asegurar estructura
     dateList.forEach(date => {
       if (!appData[date]) {
         appData[date] = { value: 0, notes: '' };
       }
     });
 
-    // Guardar en LocalStorage
-    function saveData() {
-      localStorage.setItem('invermar_reprocesos_data', JSON.stringify(appData));
-      updateUI();
-    }
-
-    // Inicializar Select de Fechas
     const selectDate = document.getElementById('entry-date');
+    const inputVal = document.getElementById('entry-value');
+    const inputNotes = document.getElementById('entry-notes');
+
+    // Bloquear comas, puntos o caracteres no numéricos al escribir
+    inputVal.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
     dateList.forEach(date => {
       const opt = document.createElement('option');
       opt.value = date;
@@ -443,27 +447,34 @@
       selectDate.appendChild(opt);
     });
 
-    // Cargar datos en el formulario al cambiar fecha
-    selectDate.addEventListener('change', () => {
+    function loadSelectedDateData() {
       const selected = selectDate.value;
-      document.getElementById('entry-value').value = appData[selected].value || '';
-      document.getElementById('entry-notes').value = appData[selected].notes || '';
-    });
+      if (appData[selected]) {
+        const val = parseInt(appData[selected].value, 10);
+        inputVal.value = val > 0 ? val : '';
+        inputNotes.value = appData[selected].notes || '';
+      }
+    }
 
-    // Inicializar Chart.js
+    selectDate.addEventListener('change', loadSelectedDateData);
+
+    function saveData() {
+      localStorage.setItem('invermar_reprocesos_data', JSON.stringify(appData));
+      updateUI();
+    }
+
     const ctx = document.getElementById('reprocesoChart').getContext('2d');
     const myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: dateList.map(d => d.substring(0, 5)), // Mostrar DD/MM
+        labels: dateList.map(d => d.substring(0, 5)),
         datasets: [{
           label: 'Reproceso (UN)',
-          data: dateList.map(d => appData[d].value),
-          backgroundColor: '#48cae4',
-          borderColor: '#00b4d8',
+          data: dateList.map(d => parseInt(appData[d].value, 10) || 0),
+          backgroundColor: '#38bdf8',
+          borderColor: '#0284c7',
           borderWidth: 1,
-          borderRadius: 4,
-          hoverBackgroundColor: '#90e0ef'
+          borderRadius: 4
         }]
       },
       options: {
@@ -472,37 +483,24 @@
         scales: {
           x: {
             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#a0aec0', font: { size: 10 } }
+            ticks: { color: '#94a3b8', font: { size: 10 } }
           },
           y: {
             beginAtZero: true,
-            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-            ticks: { color: '#a0aec0' }
+            grid: { color: 'rgba(255, 255, 255, 0.08)' },
+            ticks: { color: '#94a3b8' }
           }
         },
         plugins: {
-          legend: { labels: { color: '#edf2f4' } },
-          tooltip: {
-            callbacks: {
-              afterBody: function(context) {
-                const index = context[0].dataIndex;
-                const dateKey = dateList[index];
-                const notes = appData[dateKey].notes;
-                return notes ? `Detalle: ${notes}` : '';
-              }
-            }
-          }
+          legend: { labels: { color: '#f1f5f9' } }
         }
       }
     });
 
-    // Actualizar Interfaz (Tabla, Gráfico y Estadísticas)
     function updateUI() {
-      // 1. Actualizar Gráfico
-      myChart.data.datasets[0].data = dateList.map(d => appData[d].value);
+      myChart.data.datasets[0].data = dateList.map(d => parseInt(appData[d].value, 10) || 0);
       myChart.update();
 
-      // 2. Actualizar Tabla
       const tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
 
@@ -510,7 +508,7 @@
       let count = 0;
 
       dateList.forEach(date => {
-        const val = parseFloat(appData[date].value) || 0;
+        const val = parseInt(appData[date].value, 10) || 0;
         const notes = appData[date].notes || '';
 
         if (val > 0) {
@@ -522,12 +520,12 @@
         tr.innerHTML = `
           <td><strong>${date}</strong></td>
           <td class="editable-cell" onclick="quickEdit('${date}', 'value')">
-            <span style="color: ${val > 0 ? '#48cae4' : '#636c76'}; font-weight: bold;">
+            <span style="color: ${val > 0 ? '#38bdf8' : '#64748b'}; font-weight: bold;">
               ${val.toLocaleString('es-CL')} UN
             </span>
           </td>
           <td class="editable-cell" onclick="quickEdit('${date}', 'notes')">
-            ${notes ? notes : '<i style="color: #636c76;">Sin detalle</i>'}
+            ${notes ? notes : '<i style="color: #64748b;">Sin detalle</i>'}
           </td>
           <td>
             <button class="btn-danger" onclick="clearDay('${date}')" title="Limpiar Día">
@@ -538,61 +536,65 @@
         tbody.appendChild(tr);
       });
 
-      // 3. Actualizar Métricas
-      const statTotal = document.getElementById('stat-total');
-      if (statTotal) {
-        statTotal.textContent = `${total.toLocaleString('es-CL')} UN`;
-      }
-      document.getElementById('stat-avg').textContent = `${count > 0 ? (total / count).toFixed(1) : 0} UN`;
+      document.getElementById('stat-total').textContent = `${total.toLocaleString('es-CL')} UN`;
+      document.getElementById('stat-avg').textContent = `${count > 0 ? Math.round(total / count).toLocaleString('es-CL') : 0} UN`;
       document.getElementById('stat-days').textContent = `${count} / ${dateList.length}`;
+
+      const progressPct = Math.min((total / PLAN_TOTAL) * 100, 100);
+      document.getElementById('plan-progress').style.width = `${progressPct}%`;
     }
 
-    // Manejo del Formulario
     document.getElementById('entry-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const date = selectDate.value;
-      const val = parseFloat(document.getElementById('entry-value').value) || 0;
-      const notes = document.getElementById('entry-notes').value;
+      const cleanVal = inputVal.value.replace(/[^0-9]/g, '');
+      const val = cleanVal === '' ? 0 : parseInt(cleanVal, 10);
 
-      appData[date] = { value: val, notes: notes };
+      appData[date] = {
+        value: isNaN(val) ? 0 : val,
+        notes: inputNotes.value.trim()
+      };
+
       saveData();
-      alert(`Datos guardados correctamente para el día ${date}`);
+      alert(`Guardado correctamente para el ${date}: ${appData[date].value.toLocaleString('es-CL')} UN`);
     });
 
-    // Edición rápida desde la tabla
     window.quickEdit = function(date, field) {
       if (field === 'value') {
-        const newVal = prompt(`Ingrese cantidad para ${date} (UN):`, appData[date].value);
+        const newVal = prompt(`Nueva cantidad entera para ${date} (UN - sin comas):`, appData[date].value);
         if (newVal !== null) {
-          appData[date].value = parseFloat(newVal) || 0;
+          const cleanVal = newVal.replace(/[^0-9]/g, '');
+          const parsed = parseInt(cleanVal, 10);
+          appData[date].value = isNaN(parsed) ? 0 : parsed;
           saveData();
+          if (selectDate.value === date) loadSelectedDateData();
         }
       } else if (field === 'notes') {
-        const newNotes = prompt(`Ingrese detalle/observación para ${date}:`, appData[date].notes);
+        const newNotes = prompt(`Nuevo detalle para ${date}:`, appData[date].notes);
         if (newNotes !== null) {
           appData[date].notes = newNotes;
           saveData();
+          if (selectDate.value === date) loadSelectedDateData();
         }
       }
     };
 
-    // Limpiar un día específico
     window.clearDay = function(date) {
-      if (confirm(`¿Deseas borrar los datos del día ${date}?`)) {
+      if (confirm(`¿Limpiar datos del ${date}?`)) {
         appData[date] = { value: 0, notes: '' };
         saveData();
+        if (selectDate.value === date) loadSelectedDateData();
       }
     };
 
-    // Borrar todo
     document.getElementById('btn-reset').addEventListener('click', () => {
-      if (confirm('¿Estás seguro de que deseas borrar TODOS los registros? Esta acción no se puede deshacer.')) {
+      if (confirm('¿Deseas borrar TODOS los registros?')) {
         dateList.forEach(d => appData[d] = { value: 0, notes: '' });
         saveData();
+        loadSelectedDateData();
       }
     });
 
-    // Exportar datos
     document.getElementById('btn-export').addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -603,8 +605,7 @@
       downloadAnchor.remove();
     });
 
-    // Cargar formulario inicial
-    selectDate.dispatchEvent(new Event('change'));
+    loadSelectedDateData();
     updateUI();
   </script>
 </body>
