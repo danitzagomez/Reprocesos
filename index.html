@@ -301,7 +301,7 @@
     <div class="summary-cards">
       <div class="stat-card">
         <h3>Plan Total</h3>
-        <div class="value">43.000 UN</div>
+        <div class="value">36.800 UN</div>
         <span style="font-size:0.75rem; color:var(--text-muted)">Meta Global</span>
       </div>
       <div class="stat-card">
@@ -412,7 +412,7 @@
       }
 
       // Agosto: 1 al 28
-      for (let day = 1; day <= 28; day++) {
+      for (let day = 1; day <= 31; day++) {
         if (!excludedAugustDays.includes(day)) {
           const formattedDay = String(day).padStart(2, '0');
           dates.push(`${formattedDay}/08/2026`);
