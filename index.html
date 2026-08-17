@@ -398,7 +398,7 @@
 
     // Días a excluir por mes
     const excludedJulyDays = [25, 26];
-    const excludedAugustDays = [1, 2, 8, 9, 15, 16, 22, 23];
+    const excludedAugustDays = [1, 2, 8, 9, 15, 16, 22, 23, 29, 30];
 
     function generateCustomDateRange() {
       const dates = [];
@@ -411,8 +411,8 @@
         }
       }
 
-      // Agosto: 1 al 22
-      for (let day = 1; day <= 22; day++) {
+      // Agosto: 1 al 28
+      for (let day = 1; day <= 28; day++) {
         if (!excludedAugustDays.includes(day)) {
           const formattedDay = String(day).padStart(2, '0');
           dates.push(`${formattedDay}/08/2026`);
