@@ -423,7 +423,7 @@
     }
 
     const dateList = generateCustomDateRange();
-    let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
+    let appData = Xls.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
     dateList.forEach(date => {
       if (!appData[date]) {
@@ -596,7 +596,7 @@
     });
 
     document.getElementById('btn-export').addEventListener('click', () => {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const dataStr = "data:text/xls;charset=utf-8," + encodeURIComponent(XLS.stringify(appData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", `invermar_reprocesos_${new Date().toISOString().slice(0,10)}.json`);
