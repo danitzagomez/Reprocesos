@@ -380,7 +380,7 @@
 
       <div class="actions">
         <button id="btn-export" class="btn-primary" style="background-color: #0d9488;">
-          <i class="fa-file-excel"></i> Exportar XLS
+          <i class="fa-file-excel"></i> Exportar JSON
         </button>
         <button id="btn-reset" class="btn-danger">
           <i class="fa-trash"></i> Borrar Todo
@@ -423,7 +423,7 @@
     }
 
     const dateList = generateCustomDateRange();
-    let appData = Xls.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
+    let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
     dateList.forEach(date => {
       if (!appData[date]) {
@@ -459,7 +459,7 @@
     selectDate.addEventListener('change', loadSelectedDateData);
 
     function saveData() {
-      localStorage.setItem('invermar_reprocesos_data', xls.stringify(appData));
+      localStorage.setItem('invermar_reprocesos_data', JSON.stringify(appData));
       updateUI();
     }
 
@@ -596,7 +596,7 @@
     });
 
     document.getElementById('btn-export').addEventListener('click', () => {
-      const dataStr = "data:text/xls;charset=utf-8," + encodeURIComponent(XLS.stringify(appData, null, 2));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(XLS.stringify(appData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", `invermar_reprocesos_${new Date().toISOString().slice(0,10)}.json`);
