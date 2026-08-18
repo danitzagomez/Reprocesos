@@ -459,7 +459,7 @@
     selectDate.addEventListener('change', loadSelectedDateData);
 
     function saveData() {
-      localStorage.setItem('invermar_reprocesos_data', JSON.stringify(appData));
+      localStorage.setItem('invermar_reprocesos_data', xls.stringify(appData));
       updateUI();
     }
 
