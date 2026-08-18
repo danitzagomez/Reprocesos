@@ -309,28 +309,6 @@
         <div class="value" id="stat-total">0 UN</div>
         <div class="progress-bar-container">
           <div class="progress-bar" id="plan-progress"></div>
-          <script> 
-            funtion calcularProgreso() {
-              const meta = parseFloat (document.getElementById('meta').value);
-              const ingreso = parseFloat (document.getElementById('ingreso').value);
-              const resultadoDiv = document.getElementById('resultado');
-              const progressBar = document.getElementById('bar');
-
-              if (isNaN(meta) || isNan(ingreso) || meta <=0) {
-              resultadoDiv.innerText = "Ingresa valores válidos.";
-              return:
-                }
-              const porcentaje = (ingreso / meta) * 100;
-              const porcentajeFormateado = porcentaje.toFixed(2);
-
-              resultadoDiv.innerText = `El ingreso representa un ${porcentajeFormateado}% del total.`;
-
-              // Actualiza la barra visual (con un tope del 100% para evitar desbordes visuales)
-              const porcentajeBarra = Math.min(porcentaje, 100);
-              progressBar.style.width = porcentajeBarra + '%';
-              progressBar.innerText = porcentajeFormateado + '%';
-            }
-          </script>
         </div>
       </div>
       <div class="stat-card">
@@ -445,7 +423,7 @@
     }
 
     const dateList = generateCustomDateRange();
-    let appData = JSON.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
+    let appData = Xls.parse(localStorage.getItem('invermar_reprocesos_data')) || {};
 
     dateList.forEach(date => {
       if (!appData[date]) {
@@ -618,7 +596,7 @@
     });
 
     document.getElementById('btn-export').addEventListener('click', () => {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const dataStr = "data:text/xls;charset=utf-8," + encodeURIComponent(XLS.stringify(appData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", `invermar_reprocesos_${new Date().toISOString().slice(0,10)}.json`);
